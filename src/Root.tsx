@@ -23,6 +23,21 @@ export const RemotionRoot: React.FC = () => {
         height={1920}
         schema={eggHacksSchema}
         defaultProps={{
+          locale: 'en' as const,
+          highlightColor: '#ffc043',
+          musicVolume: 0.3,
+        }}
+      />
+      <Composition
+        id="EggHacksAR"
+        component={EggHacks}
+        durationInFrames={EGG_HACKS_DURATION}
+        fps={EGG_HACKS_FPS}
+        width={1080}
+        height={1920}
+        schema={eggHacksSchema}
+        defaultProps={{
+          locale: 'ar' as const,
           highlightColor: '#ffc043',
           musicVolume: 0.3,
         }}

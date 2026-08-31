@@ -1,0 +1,121 @@
+{
+  "01-strainer-poached": [
+    {
+      "file": "ar01s1.mp3",
+      "startSec": 0.7,
+      "durationSec": 1.8
+    },
+    {
+      "file": "ar01s2.mp3",
+      "startSec": 3.3,
+      "durationSec": 2.46
+    },
+    {
+      "file": "ar01s3.mp3",
+      "startSec": 5.81,
+      "durationSec": 1.33
+    }
+  ],
+  "02-yogurt-scramble": [
+    {
+      "file": "ar02s1.mp3",
+      "startSec": 0.7,
+      "durationSec": 2.04
+    },
+    {
+      "file": "ar02s2.mp3",
+      "startSec": 3.5,
+      "durationSec": 1.44
+    },
+    {
+      "file": "ar02s3.mp3",
+      "startSec": 6,
+      "durationSec": 2.17
+    }
+  ],
+  "03-parmesan-crispy": [
+    {
+      "file": "ar03s1.mp3",
+      "startSec": 0.7,
+      "durationSec": 2.22
+    },
+    {
+      "file": "ar03s2.mp3",
+      "startSec": 3.4,
+      "durationSec": 2.22
+    },
+    {
+      "file": "ar03s3.mp3",
+      "startSec": 6.1,
+      "durationSec": 1.85
+    }
+  ],
+  "04-easy-peel": [
+    {
+      "file": "ar04s1.mp3",
+      "startSec": 0.6,
+      "durationSec": 1.85
+    },
+    {
+      "file": "ar04s2.mp3",
+      "startSec": 3.2,
+      "durationSec": 1.91
+    },
+    {
+      "file": "ar04s3.mp3",
+      "startSec": 6.2,
+      "durationSec": 1.62
+    }
+  ],
+  "05-chili-crisp": [
+    {
+      "file": "ar05s1.mp3",
+      "startSec": 0.7,
+      "durationSec": 3.06
+    },
+    {
+      "file": "ar05s2.mp3",
+      "startSec": 3.81,
+      "durationSec": 1.85
+    },
+    {
+      "file": "ar05s3.mp3",
+      "startSec": 6.1,
+      "durationSec": 2.09
+    }
+  ],
+  "06-steam-lid-sunny": [
+    {
+      "file": "ar06s1.mp3",
+      "startSec": 0.6,
+      "durationSec": 1.75
+    },
+    {
+      "file": "ar06s2.mp3",
+      "startSec": 3.2,
+      "durationSec": 2.04
+    },
+    {
+      "file": "ar06s3.mp3",
+      "startSec": 5.9,
+      "durationSec": 1.99
+    }
+  ],
+  "07-bottle-shake": [
+    {
+      "file": "ar07s1.mp3",
+      "startSec": 0.7,
+      "durationSec": 1.57
+    },
+    {
+      "file": "ar07s2.mp3",
+      "startSec": 3.4,
+      "durationSec": 1.52
+    },
+    {
+      "file": "ar07s3.mp3",
+      "startSec": 6,
+      "durationSec": 1.67
+    }
+  ]
+}

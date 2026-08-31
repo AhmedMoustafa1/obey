@@ -1,0 +1,30 @@
+[
+  {
+    "text": " سبع",
+    "startMs": 260,
+    "endMs": 510,
+    "timestampMs": 385,
+    "confidence": null
+  },
+  {
+    "text": " حيل",
+    "startMs": 510,
+    "endMs": 759,
+    "timestampMs": 635,
+    "confidence": null
+  },
+  {
+    "text": " للبيض",
+    "startMs": 759,
+    "endMs": 1120,
+    "timestampMs": 940,
+    "confidence": null
+  },
+  {
+    "text": " طاخ!",
+    "startMs": 4600,
+    "endMs": 5600,
+    "timestampMs": 5100,
+    "confidence": null
+  }
+]

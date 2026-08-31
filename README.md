@@ -21,7 +21,8 @@ npx remotion still Intro out/thumbnail.png --frame=60
 
 | Id | What it is |
 | --- | --- |
-| `EggHacks` | **Seven Egg Hacks** — full edit of 8 clips (`public/clips/`): intro + 7 recipe segments, crossfades, animated recipe title cards, word-pop captions, comedic Mom voiceover (`public/vo/`), and an instrumental music bed that ducks under speech (1080×1920 @ 24fps) |
+| `EggHacks` | **Seven Egg Hacks** — full edit of 8 clips (`public/clips/`): intro + 7 recipe segments, crossfades, animated recipe title cards, word-pop captions spoken by the Mom voiceover (`public/vo/`), and an instrumental music bed that ducks under speech (1080×1920 @ 24fps) |
+| `EggHacksAR` | **Arabic edition** of the same edit — Egyptian Arabic (Masri) voiceover, RTL word-pop captions, Arabic title cards/badges/intro (Cairo font), all driven by the `locale` prop on the same component |
 | `Intro` | Springs, self-hosted fonts, shapes, animated transforms, zod-editable props |
 | `SceneTransitions` | `@remotion/transitions` — fade, slide, wipe between scenes |
 | `TikTokCaptions` | Word-by-word animated captions (vertical 1080×1920) |
@@ -41,6 +42,8 @@ The Mom narration **speaks the on-screen captions verbatim** — 21 lines (7 hac
 2. `node scripts/build-captions.mjs <clip-wav-dir> <vo-wav-dir>` — re-times each caption's words to the VO audio by RMS energy alignment, so words pop exactly as they're spoken. Footage-audio captions (the intro's "Seven egg hacks." + SPLAT!, hack 1's "Wow!") are aligned to the clip WAVs instead. The intro has no VO — its captions transcribe the real footage audio.
 
 The composition plays each line, softens the clip's own audio 30% under it, and ducks the music. To change a line: update its text in both scripts, regenerate the mp3 into `public/vo/`, re-run both scripts, re-render.
+
+Both scripts take a locale argument (`en` default, `ar`): the Arabic edition uses `ar`-prefixed mp3s (voice "Farida", Egyptian Arabic), `src/vo-manifest-ar.json`, and `src/captions-ar/`. The manifest builder auto-resolves collisions when a long line would talk over the next.
 
 ## Installed Remotion packages
 

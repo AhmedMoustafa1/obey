@@ -1,0 +1,72 @@
+[
+  {
+    "text": " معلقة",
+    "startMs": 760,
+    "endMs": 1150,
+    "timestampMs": 955,
+    "confidence": null
+  },
+  {
+    "text": " زبادي",
+    "startMs": 1150,
+    "endMs": 1540,
+    "timestampMs": 1345,
+    "confidence": null
+  },
+  {
+    "text": " على",
+    "startMs": 1540,
+    "endMs": 1810,
+    "timestampMs": 1675,
+    "confidence": null
+  },
+  {
+    "text": " البيض",
+    "startMs": 1810,
+    "endMs": 2200,
+    "timestampMs": 2005,
+    "confidence": null
+  },
+  {
+    "text": " اخفقيهم",
+    "startMs": 3540,
+    "endMs": 4086,
+    "timestampMs": 3813,
+    "confidence": null
+  },
+  {
+    "text": " كويس",
+    "startMs": 4086,
+    "endMs": 4440,
+    "timestampMs": 4263,
+    "confidence": null
+  },
+  {
+    "text": " نار",
+    "startMs": 6040,
+    "endMs": 6388,
+    "timestampMs": 6214,
+    "confidence": null
+  },
+  {
+    "text": " هادية",
+    "startMs": 6388,
+    "endMs": 6890,
+    "timestampMs": 6639,
+    "confidence": null
+  },
+  {
+    "text": " وصبر",
+    "startMs": 6890,
+    "endMs": 7315,
+    "timestampMs": 7103,
+    "confidence": null
+  },
+  {
+    "text": " جميل",
+    "startMs": 7315,
+    "endMs": 7740,
+    "timestampMs": 7528,
+    "confidence": null
+  }
+]

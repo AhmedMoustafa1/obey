@@ -16,20 +16,61 @@ import {TransitionSeries, linearTiming} from '@remotion/transitions';
 import {fade} from '@remotion/transitions/fade';
 import {createTikTokStyleCaptions, type Caption} from '@remotion/captions';
 import {fitText} from '@remotion/layout-utils';
-import {fontFamily} from '../fonts';
+import {fontFamily as interFamily, arabicFontFamily} from '../fonts';
 
-import voManifest from '../vo-manifest.json';
-import introCaptions from '../captions/00-intro.json';
-import strainerCaptions from '../captions/01-strainer-poached.json';
-import yogurtCaptions from '../captions/02-yogurt-scramble.json';
-import parmesanCaptions from '../captions/03-parmesan-crispy.json';
-import easyPeelCaptions from '../captions/04-easy-peel.json';
-import chiliCaptions from '../captions/05-chili-crisp.json';
-import steamLidCaptions from '../captions/06-steam-lid-sunny.json';
-import bottleCaptions from '../captions/07-bottle-shake.json';
+import voManifestEn from '../vo-manifest.json';
+import voManifestAr from '../vo-manifest-ar.json';
+import introEn from '../captions/00-intro.json';
+import strainerEn from '../captions/01-strainer-poached.json';
+import yogurtEn from '../captions/02-yogurt-scramble.json';
+import parmesanEn from '../captions/03-parmesan-crispy.json';
+import easyPeelEn from '../captions/04-easy-peel.json';
+import chiliEn from '../captions/05-chili-crisp.json';
+import steamLidEn from '../captions/06-steam-lid-sunny.json';
+import bottleEn from '../captions/07-bottle-shake.json';
+import introAr from '../captions-ar/00-intro.json';
+import strainerAr from '../captions-ar/01-strainer-poached.json';
+import yogurtAr from '../captions-ar/02-yogurt-scramble.json';
+import parmesanAr from '../captions-ar/03-parmesan-crispy.json';
+import easyPeelAr from '../captions-ar/04-easy-peel.json';
+import chiliAr from '../captions-ar/05-chili-crisp.json';
+import steamLidAr from '../captions-ar/06-steam-lid-sunny.json';
+import bottleAr from '../captions-ar/07-bottle-shake.json';
 
 export const FPS = 24;
 const TRANSITION_FRAMES = 8;
+
+type Locale = 'en' | 'ar';
+type VoLine = {file: string; startSec: number; durationSec: number};
+
+type Slug =
+  | '00-intro'
+  | '01-strainer-poached'
+  | '02-yogurt-scramble'
+  | '03-parmesan-crispy'
+  | '04-easy-peel'
+  | '05-chili-crisp'
+  | '06-steam-lid-sunny'
+  | '07-bottle-shake';
+
+const SEGMENTS: Array<{slug: Slug; file: string; durationInFrames: number; number?: number}> = [
+  {slug: '00-intro', file: '00-intro.mp4', durationInFrames: 6 * FPS},
+  {slug: '01-strainer-poached', file: '01-strainer-poached.mp4', durationInFrames: 10 * FPS, number: 1},
+  {slug: '02-yogurt-scramble', file: '02-yogurt-scramble.mp4', durationInFrames: 10 * FPS, number: 2},
+  {slug: '03-parmesan-crispy', file: '03-parmesan-crispy.mp4', durationInFrames: 10 * FPS, number: 3},
+  {slug: '04-easy-peel', file: '04-easy-peel.mp4', durationInFrames: 10 * FPS, number: 4},
+  {slug: '05-chili-crisp', file: '05-chili-crisp.mp4', durationInFrames: 10 * FPS, number: 5},
+  {slug: '06-steam-lid-sunny', file: '06-steam-lid-sunny.mp4', durationInFrames: 10 * FPS, number: 6},
+  {slug: '07-bottle-shake', file: '07-bottle-shake.mp4', durationInFrames: 10 * FPS, number: 7},
+];
+
+export const EGG_HACKS_DURATION =
+  SEGMENTS.reduce((sum, s) => sum + s.durationInFrames, 0) -
+  TRANSITION_FRAMES * (SEGMENTS.length - 1);
+
+const segmentStart = (index: number): number =>
+  SEGMENTS.slice(0, index).reduce((sum, s) => sum + s.durationInFrames, 0) -
+  TRANSITION_FRAMES * index;
 
 // Whisper artifacts worth dropping: bracketed sound events and pure punctuation.
 const cleanCaptions = (captions: Caption[]): Caption[] =>
@@ -40,78 +81,101 @@ const cleanCaptions = (captions: Caption[]): Caption[] =>
     return true;
   });
 
-type VoLine = {file: string; startSec: number; durationSec: number};
+const AR_DIGITS = ['١', '٢', '٣', '٤', '٥', '٦', '٧'];
 
-const VO: Record<string, VoLine[]> = voManifest;
-
-type Segment = {
-  file: string;
-  slug: string;
-  durationInFrames: number;
-  captions: Caption[];
-  number?: number;
-  title?: string;
+type LocaleData = {
+  fontFamily: string;
+  dir: 'ltr' | 'rtl';
+  captions: Record<Slug, Caption[]>;
+  vo: Record<string, VoLine[]>;
+  badge: (n: number) => string;
+  titles: Record<number, string>;
+  intro: {big: string; main: string; tag: string};
 };
 
-const seg = (
-  file: string,
-  seconds: number,
-  captions: Caption[],
-  number?: number,
-  title?: string,
-): Segment => ({
-  file,
-  slug: file.replace(/\.mp4$/, ''),
-  durationInFrames: seconds * FPS,
-  captions: cleanCaptions(captions),
-  number,
-  title,
-});
-
-const SEGMENTS: Segment[] = [
-  seg('00-intro.mp4', 6, introCaptions as Caption[]),
-  seg('01-strainer-poached.mp4', 10, strainerCaptions as Caption[], 1, 'Strainer Poached Egg'),
-  seg('02-yogurt-scramble.mp4', 10, yogurtCaptions as Caption[], 2, 'Creamy Yogurt Scramble'),
-  seg('03-parmesan-crispy.mp4', 10, parmesanCaptions as Caption[], 3, 'Parmesan Crispy Egg'),
-  seg('04-easy-peel.mp4', 10, easyPeelCaptions as Caption[], 4, 'Easy-Peel Eggs'),
-  seg('05-chili-crisp.mp4', 10, chiliCaptions as Caption[], 5, 'Chili-Crisp Egg'),
-  seg('06-steam-lid-sunny.mp4', 10, steamLidCaptions as Caption[], 6, 'Steam-Lid Sunny Egg'),
-  seg('07-bottle-shake.mp4', 10, bottleCaptions as Caption[], 7, 'Bottle-Shake Scramble'),
-];
-
-export const EGG_HACKS_DURATION = SEGMENTS.reduce(
-  (sum, s) => sum + s.durationInFrames,
-  0,
-) - TRANSITION_FRAMES * (SEGMENTS.length - 1);
-
-// Absolute start frame of each segment on the timeline (transitions overlap).
-const segmentStart = (index: number): number =>
-  SEGMENTS.slice(0, index).reduce((sum, s) => sum + s.durationInFrames, 0) -
-  TRANSITION_FRAMES * index;
+const LOCALES: Record<Locale, LocaleData> = {
+  en: {
+    fontFamily: interFamily,
+    dir: 'ltr',
+    captions: {
+      '00-intro': cleanCaptions(introEn as Caption[]),
+      '01-strainer-poached': cleanCaptions(strainerEn as Caption[]),
+      '02-yogurt-scramble': cleanCaptions(yogurtEn as Caption[]),
+      '03-parmesan-crispy': cleanCaptions(parmesanEn as Caption[]),
+      '04-easy-peel': cleanCaptions(easyPeelEn as Caption[]),
+      '05-chili-crisp': cleanCaptions(chiliEn as Caption[]),
+      '06-steam-lid-sunny': cleanCaptions(steamLidEn as Caption[]),
+      '07-bottle-shake': cleanCaptions(bottleEn as Caption[]),
+    },
+    vo: voManifestEn,
+    badge: (n) => `HACK ${n}/7`,
+    titles: {
+      1: 'Strainer Poached Egg',
+      2: 'Creamy Yogurt Scramble',
+      3: 'Parmesan Crispy Egg',
+      4: 'Easy-Peel Eggs',
+      5: 'Chili-Crisp Egg',
+      6: 'Steam-Lid Sunny Egg',
+      7: 'Bottle-Shake Scramble',
+    },
+    intro: {big: '7', main: 'EGG HACKS', tag: 'TETA APPROVED'},
+  },
+  ar: {
+    fontFamily: arabicFontFamily,
+    dir: 'rtl',
+    captions: {
+      '00-intro': cleanCaptions(introAr as Caption[]),
+      '01-strainer-poached': cleanCaptions(strainerAr as Caption[]),
+      '02-yogurt-scramble': cleanCaptions(yogurtAr as Caption[]),
+      '03-parmesan-crispy': cleanCaptions(parmesanAr as Caption[]),
+      '04-easy-peel': cleanCaptions(easyPeelAr as Caption[]),
+      '05-chili-crisp': cleanCaptions(chiliAr as Caption[]),
+      '06-steam-lid-sunny': cleanCaptions(steamLidAr as Caption[]),
+      '07-bottle-shake': cleanCaptions(bottleAr as Caption[]),
+    },
+    vo: voManifestAr,
+    badge: (n) => `الحيلة ${AR_DIGITS[n - 1]} من ٧`,
+    titles: {
+      1: 'بيض بوشيه بالمصفاة',
+      2: 'سكرامبل كريمي بالزبادي',
+      3: 'بيض مقرمش بالبارميزان',
+      4: 'بيض سهل التقشير',
+      5: 'بيض بالشطة المقرمشة',
+      6: 'بيض عيون على البخار',
+      7: 'سكرامبل رجّ الإزازة',
+    },
+    intro: {big: '٧', main: 'حيل للبيض', tag: 'بختم تيتا'},
+  },
+};
 
 // Frame spans (absolute) where someone is speaking — used to duck the music.
-// Covers on-screen caption beats and the voiceover lines.
-const SPEECH_SPANS: Array<[number, number]> = SEGMENTS.flatMap((s, i) => {
-  const offset = segmentStart(i);
-  const captionSpans = s.captions.map(
-    (c): [number, number] => [
-      offset + (c.startMs / 1000) * FPS,
-      offset + (c.endMs / 1000) * FPS,
-    ],
-  );
-  const voSpans = (VO[s.slug] ?? []).map(
-    (l): [number, number] => [
-      offset + l.startSec * FPS,
-      offset + (l.startSec + l.durationSec) * FPS,
-    ],
-  );
-  return [...captionSpans, ...voSpans];
-});
+const speechSpansFor = (loc: LocaleData): Array<[number, number]> =>
+  SEGMENTS.flatMap((s, i) => {
+    const offset = segmentStart(i);
+    const captionSpans = loc.captions[s.slug].map(
+      (c): [number, number] => [
+        offset + (c.startMs / 1000) * FPS,
+        offset + (c.endMs / 1000) * FPS,
+      ],
+    );
+    const voSpans = (loc.vo[s.slug] ?? []).map(
+      (l): [number, number] => [
+        offset + l.startSec * FPS,
+        offset + (l.startSec + l.durationSec) * FPS,
+      ],
+    );
+    return [...captionSpans, ...voSpans];
+  });
 
-const speechActivity = (frame: number): number => {
+const SPEECH_SPANS: Record<Locale, Array<[number, number]>> = {
+  en: speechSpansFor(LOCALES.en),
+  ar: speechSpansFor(LOCALES.ar),
+};
+
+const speechActivity = (spans: Array<[number, number]>, frame: number): number => {
   const RAMP = 10;
   let max = 0;
-  for (const [start, end] of SPEECH_SPANS) {
+  for (const [start, end] of spans) {
     const v = interpolate(
       frame,
       [start - RAMP, start, end, end + RAMP],
@@ -125,6 +189,7 @@ const speechActivity = (frame: number): number => {
 };
 
 export const eggHacksSchema = z.object({
+  locale: z.enum(['en', 'ar']),
   highlightColor: zColor(),
   musicVolume: z.number().min(0).max(1),
 });
@@ -135,7 +200,7 @@ const PALETTE = {
   yolk: '#f5a623',
 };
 
-const TitleCard: React.FC<{number: number; title: string}> = ({number, title}) => {
+const TitleCard: React.FC<{number: number; loc: LocaleData}> = ({number, loc}) => {
   const frame = useCurrentFrame();
   const {fps, width} = useVideoConfig();
 
@@ -149,10 +214,11 @@ const TitleCard: React.FC<{number: number; title: string}> = ({number, title}) =
   const opacity = enter * (1 - exit);
   const y = interpolate(enter, [0, 1], [-40, 0]) - exit * 24;
 
+  const title = loc.titles[number];
   const {fontSize} = fitText({
     text: title,
     withinWidth: width * 0.66,
-    fontFamily,
+    fontFamily: loc.fontFamily,
     fontWeight: '800',
   });
 
@@ -168,14 +234,15 @@ const TitleCard: React.FC<{number: number; title: string}> = ({number, title}) =
           gap: 18,
           opacity,
           transform: `translateY(${y}px)`,
+          direction: loc.dir,
         }}
       >
         <div
           style={{
-            fontFamily,
+            fontFamily: loc.fontFamily,
             fontWeight: 800,
             fontSize: 34,
-            letterSpacing: 6,
+            letterSpacing: loc.dir === 'rtl' ? 0 : 6,
             color: PALETTE.charcoal,
             backgroundColor: PALETTE.yolk,
             borderRadius: 999,
@@ -183,11 +250,11 @@ const TitleCard: React.FC<{number: number; title: string}> = ({number, title}) =
             boxShadow: '0 8px 28px rgba(0,0,0,0.35)',
           }}
         >
-          HACK {number}/7
+          {loc.badge(number)}
         </div>
         <div
           style={{
-            fontFamily,
+            fontFamily: loc.fontFamily,
             fontWeight: 800,
             fontSize: Math.min(64, fontSize),
             color: PALETTE.charcoal,
@@ -205,7 +272,7 @@ const TitleCard: React.FC<{number: number; title: string}> = ({number, title}) =
   );
 };
 
-const IntroTitle: React.FC = () => {
+const IntroTitle: React.FC<{loc: LocaleData}> = ({loc}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
 
@@ -226,11 +293,12 @@ const IntroTitle: React.FC = () => {
           alignItems: 'center',
           opacity: enter * (1 - exit),
           transform: `scale(${0.7 + enter * 0.3}) rotate(${interpolate(enter, [0, 1], [-6, -2])}deg)`,
+          direction: loc.dir,
         }}
       >
         <div
           style={{
-            fontFamily,
+            fontFamily: loc.fontFamily,
             fontWeight: 800,
             fontSize: 100,
             lineHeight: 1,
@@ -238,26 +306,26 @@ const IntroTitle: React.FC = () => {
             textShadow: '0 6px 0 rgba(0,0,0,0.25), 0 14px 40px rgba(0,0,0,0.45)',
           }}
         >
-          7
+          {loc.intro.big}
         </div>
         <div
           style={{
-            fontFamily,
+            fontFamily: loc.fontFamily,
             fontWeight: 800,
             fontSize: 64,
             color: PALETTE.cream,
             textShadow: '0 4px 0 rgba(0,0,0,0.25), 0 12px 36px rgba(0,0,0,0.45)',
           }}
         >
-          EGG HACKS
+          {loc.intro.main}
         </div>
         <div
           style={{
             marginTop: 12,
-            fontFamily,
+            fontFamily: loc.fontFamily,
             fontWeight: 800,
             fontSize: 30,
-            letterSpacing: 4,
+            letterSpacing: loc.dir === 'rtl' ? 0 : 4,
             color: PALETTE.charcoal,
             backgroundColor: PALETTE.yolk,
             borderRadius: 999,
@@ -265,7 +333,7 @@ const IntroTitle: React.FC = () => {
             boxShadow: '0 8px 28px rgba(0,0,0,0.35)',
           }}
         >
-          TETA APPROVED
+          {loc.intro.tag}
         </div>
       </div>
     </AbsoluteFill>
@@ -275,7 +343,8 @@ const IntroTitle: React.FC = () => {
 const CaptionPage: React.FC<{
   page: ReturnType<typeof createTikTokStyleCaptions>['pages'][number];
   highlightColor: string;
-}> = ({page, highlightColor}) => {
+  loc: LocaleData;
+}> = ({page, highlightColor, loc}) => {
   const frame = useCurrentFrame();
   const {fps, width} = useVideoConfig();
 
@@ -285,7 +354,7 @@ const CaptionPage: React.FC<{
   const {fontSize} = fitText({
     text: page.text,
     withinWidth: width * 0.82,
-    fontFamily,
+    fontFamily: loc.fontFamily,
     fontWeight: '800',
   });
 
@@ -295,11 +364,12 @@ const CaptionPage: React.FC<{
         style={{
           marginBottom: '21%',
           maxWidth: '86%',
-          fontFamily,
+          fontFamily: loc.fontFamily,
           fontWeight: 800,
           fontSize: Math.min(62, Math.max(40, fontSize)),
           lineHeight: 1.25,
           textAlign: 'center',
+          direction: loc.dir,
           color: 'white',
           textShadow:
             '0 3px 6px rgba(0,0,0,0.85), 0 8px 28px rgba(0,0,0,0.6)',
@@ -320,10 +390,11 @@ const CaptionPage: React.FC<{
   );
 };
 
-const SegmentCaptions: React.FC<{captions: Caption[]; highlightColor: string}> = ({
-  captions,
-  highlightColor,
-}) => {
+const SegmentCaptions: React.FC<{
+  captions: Caption[];
+  highlightColor: string;
+  loc: LocaleData;
+}> = ({captions, highlightColor, loc}) => {
   const {fps} = useVideoConfig();
   const {pages} = useMemo(
     () =>
@@ -344,7 +415,7 @@ const SegmentCaptions: React.FC<{captions: Caption[]; highlightColor: string}> =
         const duration = Math.max(1, Math.round((page.durationMs / 1000) * fps));
         return (
           <Sequence key={i} from={from} durationInFrames={duration}>
-            <CaptionPage page={page} highlightColor={highlightColor} />
+            <CaptionPage page={page} highlightColor={highlightColor} loc={loc} />
           </Sequence>
         );
       })}
@@ -352,11 +423,12 @@ const SegmentCaptions: React.FC<{captions: Caption[]; highlightColor: string}> =
   );
 };
 
-const SegmentVideo: React.FC<{segment: Segment; highlightColor: string}> = ({
-  segment,
-  highlightColor,
-}) => {
-  const voLines = VO[segment.slug] ?? [];
+const SegmentVideo: React.FC<{
+  segment: (typeof SEGMENTS)[number];
+  highlightColor: string;
+  loc: LocaleData;
+}> = ({segment, highlightColor, loc}) => {
+  const voLines = loc.vo[segment.slug] ?? [];
   const voSpans = voLines.map(
     (l): [number, number] => [l.startSec * FPS, (l.startSec + l.durationSec) * FPS],
   );
@@ -391,25 +463,33 @@ const SegmentVideo: React.FC<{segment: Segment; highlightColor: string}> = ({
           <Audio src={staticFile(`vo/${line.file}`)} />
         </Sequence>
       ))}
-      {segment.number !== undefined && segment.title !== undefined ? (
-        <TitleCard number={segment.number} title={segment.title} />
+      {segment.number !== undefined ? (
+        <TitleCard number={segment.number} loc={loc} />
       ) : (
-        <IntroTitle />
+        <IntroTitle loc={loc} />
       )}
-      <SegmentCaptions captions={segment.captions} highlightColor={highlightColor} />
+      <SegmentCaptions
+        captions={loc.captions[segment.slug]}
+        highlightColor={highlightColor}
+        loc={loc}
+      />
     </AbsoluteFill>
   );
 };
 
 export const EggHacks: React.FC<z.infer<typeof eggHacksSchema>> = ({
+  locale,
   highlightColor,
   musicVolume,
 }) => {
+  const loc = LOCALES[locale];
+  const spans = SPEECH_SPANS[locale];
+
   return (
     <AbsoluteFill style={{backgroundColor: '#0d0a07'}}>
       <TransitionSeries>
         {SEGMENTS.map((segment, i) => (
-          <React.Fragment key={segment.file}>
+          <React.Fragment key={segment.slug}>
             {i > 0 ? (
               <TransitionSeries.Transition
                 presentation={fade()}
@@ -417,7 +497,7 @@ export const EggHacks: React.FC<z.infer<typeof eggHacksSchema>> = ({
               />
             ) : null}
             <TransitionSeries.Sequence durationInFrames={segment.durationInFrames}>
-              <SegmentVideo segment={segment} highlightColor={highlightColor} />
+              <SegmentVideo segment={segment} highlightColor={highlightColor} loc={loc} />
             </TransitionSeries.Sequence>
           </React.Fragment>
         ))}
@@ -425,7 +505,7 @@ export const EggHacks: React.FC<z.infer<typeof eggHacksSchema>> = ({
       <Audio
         src={staticFile('music.mp3')}
         volume={(f) => {
-          const duck = 1 - 0.55 * speechActivity(f);
+          const duck = 1 - 0.55 * speechActivity(spans, f);
           const fadeInOut = interpolate(
             f,
             [0, FPS, EGG_HACKS_DURATION - 2 * FPS, EGG_HACKS_DURATION - 6],

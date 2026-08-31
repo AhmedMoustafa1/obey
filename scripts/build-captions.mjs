@@ -7,7 +7,7 @@
 //  2. Real footage dialogue/SFX: "Seven egg hacks." + SPLAT! in the intro and
 //     the "Wow!" in the strainer clip, aligned to the clip audio.
 //
-// Usage: node scripts/build-captions.mjs <clip-wav-dir> <vo-wav-dir>
+// Usage: node scripts/build-captions.mjs <clip-wav-dir> <vo-wav-dir> [en|ar]
 //   clip-wav-dir: 16kHz mono WAVs extracted from public/clips/*.mp4
 //   vo-wav-dir:   16kHz mono WAVs extracted from public/vo/*.mp3
 import {readFileSync, writeFileSync, mkdirSync} from 'node:fs';
@@ -15,17 +15,45 @@ import path from 'node:path';
 
 const clipWavDir = process.argv[2];
 const voWavDir = process.argv[3];
-if (!clipWavDir || !voWavDir) {
-  console.error('Usage: node scripts/build-captions.mjs <clip-wav-dir> <vo-wav-dir>');
+const locale = process.argv[4] ?? 'en';
+if (!clipWavDir || !voWavDir || !['en', 'ar'].includes(locale)) {
+  console.error('Usage: node scripts/build-captions.mjs <clip-wav-dir> <vo-wav-dir> [en|ar]');
   process.exit(1);
 }
 
 const voManifest = JSON.parse(
-  readFileSync(path.join(process.cwd(), 'src', 'vo-manifest.json'), 'utf8'),
+  readFileSync(
+    path.join(process.cwd(), 'src', locale === 'ar' ? 'vo-manifest-ar.json' : 'vo-manifest.json'),
+    'utf8',
+  ),
 );
 
 // Must match the generated audio verbatim — the VO speaks the captions.
-const VO_TEXTS = {
+const VO_TEXTS_AR = {
+  'ar01s1.mp3': 'اكسري البيضة في المصفاة',
+  'ar01s2.mp3': 'الميّة الزيادة بتنزل لوحدها',
+  'ar01s3.mp3': 'أحلى بيضة بوشيه',
+  'ar02s1.mp3': 'معلقة زبادي على البيض',
+  'ar02s2.mp3': 'اخفقيهم كويس',
+  'ar02s3.mp3': 'نار هادية وصبر جميل',
+  'ar03s1.mp3': 'البارميزان الأول في الطاسة',
+  'ar03s2.mp3': 'واكسري البيضة فوقيه على طول',
+  'ar03s3.mp3': 'أطراف مقرمشة تجنن',
+  'ar04s1.mp3': 'لما التقشير يبوظ الدنيا',
+  'ar04s2.mp3': 'تيتا بتعملهم على البخار',
+  'ar04s3.mp3': 'والقشرة بتقلع لوحدها',
+  'ar05s1.mp3': 'الشطة المقرمشة الأول في الطاسة',
+  'ar05s2.mp3': 'والبيضة بتتقلي جواها',
+  'ar05s3.mp3': 'حراقة ومقرمشة وسحر',
+  'ar06s1.mp3': 'خلاص مفيش صفار مكسور',
+  'ar06s2.mp3': 'شوية ميّة وغطي الطاسة',
+  'ar06s3.mp3': 'والبخار يخلص الشغل',
+  'ar07s1.mp3': 'اكسري البيض في إزازة',
+  'ar07s2.mp3': 'رجّي رجّي رجّي',
+  'ar07s3.mp3': 'أطرى سكرامبل في الدنيا',
+};
+
+const VO_TEXTS_EN = {
   '01s1.mp3': 'Crack it into a strainer',
   '01s2.mp3': 'Watery whites drain away',
   '01s3.mp3': 'The perfect poach',
@@ -48,6 +76,13 @@ const VO_TEXTS = {
   '07s2.mp3': 'Shake shake SHAKE',
   '07s3.mp3': 'The fluffiest scramble',
 };
+
+const VO_TEXTS = locale === 'ar' ? VO_TEXTS_AR : VO_TEXTS_EN;
+
+// On-screen text for the real footage audio, per locale.
+const FOOTAGE = locale === 'ar'
+  ? {introLine: 'سبع حيل للبيض', splat: 'طاخ!', wow: 'واو!'}
+  : {introLine: 'Seven egg hacks.', splat: 'SPLAT!', wow: 'Wow!'};
 
 const SAMPLE_RATE = 16000;
 const HOP_MS = 20;
@@ -206,7 +241,7 @@ for (const [slug, lines] of Object.entries(voManifest)) {
   const {env, islands} = islandsOfFile(path.join(clipWavDir, '00-intro.wav'));
   const speech = islands.find((i) => i.startMs < 3000) ?? {startMs: 500, endMs: 2100};
   const lineEnd = Math.min(speech.endMs, speech.startMs + 1900);
-  const aligned = alignWordsToIslands('Seven egg hacks.', [
+  const aligned = alignWordsToIslands(FOOTAGE.introLine, [
     {startMs: speech.startMs, endMs: lineEnd},
   ]);
   for (const {word, startMs, endMs} of aligned) {
@@ -215,7 +250,7 @@ for (const [slug, lines] of Object.entries(voManifest)) {
   const splat = loudestIslandIn(env, islands, 3000, 5600);
   if (splat) {
     const start = Math.max(splat.startMs, 3000);
-    out['00-intro'].push(toCaption('SPLAT!', Math.round(start), Math.round(start + 1000)));
+    out['00-intro'].push(toCaption(FOOTAGE.splat, Math.round(start), Math.round(start + 1000)));
     console.log('00-intro SPLAT at', Math.round(start));
   }
 }
@@ -227,13 +262,13 @@ for (const [slug, lines] of Object.entries(voManifest)) {
   if (wow) {
     const start = Math.max(wow.startMs, 7600);
     out['01-strainer-poached'].push(
-      toCaption('Wow!', Math.round(start), Math.round(Math.min(start + 800, wow.endMs + 300))),
+      toCaption(FOOTAGE.wow, Math.round(start), Math.round(Math.min(start + 800, wow.endMs + 300))),
     );
     console.log('01-strainer Wow! at', Math.round(start));
   }
 }
 
-const outDir = path.join(process.cwd(), 'src', 'captions');
+const outDir = path.join(process.cwd(), 'src', locale === 'ar' ? 'captions-ar' : 'captions');
 mkdirSync(outDir, {recursive: true});
 for (const [slug, captions] of Object.entries(out)) {
   captions.sort((a, b) => a.startMs - b.startMs);

@@ -1,0 +1,79 @@
+[
+  {
+    "text": " اكسري",
+    "startMs": 740,
+    "endMs": 1028,
+    "timestampMs": 884,
+    "confidence": null
+  },
+  {
+    "text": " البيض",
+    "startMs": 1028,
+    "endMs": 1317,
+    "timestampMs": 1173,
+    "confidence": null
+  },
+  {
+    "text": " في",
+    "startMs": 1317,
+    "endMs": 1472,
+    "timestampMs": 1395,
+    "confidence": null
+  },
+  {
+    "text": " إزازة",
+    "startMs": 1472,
+    "endMs": 1760,
+    "timestampMs": 1616,
+    "confidence": null
+  },
+  {
+    "text": " رجّي",
+    "startMs": 3480,
+    "endMs": 3753,
+    "timestampMs": 3617,
+    "confidence": null
+  },
+  {
+    "text": " رجّي",
+    "startMs": 3753,
+    "endMs": 4027,
+    "timestampMs": 3890,
+    "confidence": null
+  },
+  {
+    "text": " رجّي",
+    "startMs": 4027,
+    "endMs": 4300,
+    "timestampMs": 4164,
+    "confidence": null
+  },
+  {
+    "text": " أطرى",
+    "startMs": 6020,
+    "endMs": 6262,
+    "timestampMs": 6141,
+    "confidence": null
+  },
+  {
+    "text": " سكرامبل",
+    "startMs": 6262,
+    "endMs": 6636,
+    "timestampMs": 6449,
+    "confidence": null
+  },
+  {
+    "text": " في",
+    "startMs": 6636,
+    "endMs": 6790,
+    "timestampMs": 6713,
+    "confidence": null
+  },
+  {
+    "text": " الدنيا",
+    "startMs": 6790,
+    "endMs": 7120,
+    "timestampMs": 6955,
+    "confidence": null
+  }
+]

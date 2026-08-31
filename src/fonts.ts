@@ -12,3 +12,12 @@ loadFont({
   url: staticFile('fonts/Inter-latin.woff2'),
   weight: '100 900',
 });
+
+// Self-hosted Cairo variable font (arabic subset) for the Arabic edition.
+export const arabicFontFamily = 'Cairo';
+
+loadFont({
+  family: arabicFontFamily,
+  url: staticFile('fonts/Cairo-arabic.woff2'),
+  weight: '200 1000',
+});
