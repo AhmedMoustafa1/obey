@@ -1,79 +1,79 @@
 [
   {
     "text": " خلاص",
-    "startMs": 720,
-    "endMs": 1036,
-    "timestampMs": 878,
+    "startMs": 660,
+    "endMs": 1157,
+    "timestampMs": 909,
     "confidence": null
   },
   {
     "text": " مفيش",
-    "startMs": 1036,
-    "endMs": 1351,
-    "timestampMs": 1194,
+    "startMs": 1420,
+    "endMs": 1917,
+    "timestampMs": 1669,
     "confidence": null
   },
   {
     "text": " صفار",
-    "startMs": 1351,
-    "endMs": 1667,
-    "timestampMs": 1509,
+    "startMs": 1917,
+    "endMs": 2415,
+    "timestampMs": 2166,
     "confidence": null
   },
   {
     "text": " مكسور",
-    "startMs": 1667,
-    "endMs": 2040,
-    "timestampMs": 1854,
+    "startMs": 2415,
+    "endMs": 3003,
+    "timestampMs": 2709,
     "confidence": null
   },
   {
     "text": " شوية",
-    "startMs": 3360,
-    "endMs": 3738,
-    "timestampMs": 3549,
+    "startMs": 3580,
+    "endMs": 3996,
+    "timestampMs": 3788,
     "confidence": null
   },
   {
     "text": " ميّة",
-    "startMs": 3738,
-    "endMs": 4047,
-    "timestampMs": 3893,
+    "startMs": 3996,
+    "endMs": 4337,
+    "timestampMs": 4167,
     "confidence": null
   },
   {
     "text": " وغطي",
-    "startMs": 4047,
-    "endMs": 4425,
-    "timestampMs": 4236,
+    "startMs": 4580,
+    "endMs": 4996,
+    "timestampMs": 4788,
     "confidence": null
   },
   {
     "text": " الطاسة",
-    "startMs": 4425,
-    "endMs": 4940,
-    "timestampMs": 4683,
+    "startMs": 4996,
+    "endMs": 5563,
+    "timestampMs": 5280,
     "confidence": null
   },
   {
     "text": " والبخار",
-    "startMs": 6000,
-    "endMs": 6365,
-    "timestampMs": 6183,
+    "startMs": 5940,
+    "endMs": 6778,
+    "timestampMs": 6359,
     "confidence": null
   },
   {
     "text": " يخلص",
-    "startMs": 6365,
-    "endMs": 6601,
-    "timestampMs": 6483,
+    "startMs": 6778,
+    "endMs": 7320,
+    "timestampMs": 7049,
     "confidence": null
   },
   {
     "text": " الشغل",
-    "startMs": 6780,
-    "endMs": 7059,
-    "timestampMs": 6920,
+    "startMs": 7320,
+    "endMs": 7960,
+    "timestampMs": 7640,
     "confidence": null
   }
 ]

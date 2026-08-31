@@ -1,79 +1,79 @@
 [
   {
     "text": " لما",
-    "startMs": 680,
-    "endMs": 898,
-    "timestampMs": 789,
+    "startMs": 700,
+    "endMs": 1084,
+    "timestampMs": 892,
     "confidence": null
   },
   {
     "text": " التقشير",
-    "startMs": 898,
-    "endMs": 1310,
-    "timestampMs": 1104,
+    "startMs": 1140,
+    "endMs": 1866,
+    "timestampMs": 1503,
     "confidence": null
   },
   {
     "text": " يبوظ",
-    "startMs": 1310,
-    "endMs": 1577,
-    "timestampMs": 1444,
+    "startMs": 1866,
+    "endMs": 2335,
+    "timestampMs": 2101,
     "confidence": null
   },
   {
     "text": " الدنيا",
-    "startMs": 1577,
-    "endMs": 1940,
-    "timestampMs": 1759,
+    "startMs": 2335,
+    "endMs": 2976,
+    "timestampMs": 2656,
     "confidence": null
   },
   {
     "text": " تيتا",
-    "startMs": 3300,
-    "endMs": 3596,
-    "timestampMs": 3448,
+    "startMs": 3320,
+    "endMs": 3752,
+    "timestampMs": 3536,
     "confidence": null
   },
   {
     "text": " بتعملهم",
-    "startMs": 3596,
-    "endMs": 4054,
-    "timestampMs": 3825,
+    "startMs": 3752,
+    "endMs": 4418,
+    "timestampMs": 4085,
     "confidence": null
   },
   {
     "text": " على",
-    "startMs": 4054,
-    "endMs": 4296,
-    "timestampMs": 4175,
+    "startMs": 4418,
+    "endMs": 4772,
+    "timestampMs": 4595,
     "confidence": null
   },
   {
     "text": " البخار",
-    "startMs": 4296,
-    "endMs": 4700,
-    "timestampMs": 4498,
+    "startMs": 4772,
+    "endMs": 5360,
+    "timestampMs": 5066,
     "confidence": null
   },
   {
     "text": " والقشرة",
-    "startMs": 6240,
-    "endMs": 6701,
-    "timestampMs": 6471,
+    "startMs": 6340,
+    "endMs": 6980,
+    "timestampMs": 6660,
     "confidence": null
   },
   {
     "text": " بتقلع",
-    "startMs": 6701,
-    "endMs": 7053,
-    "timestampMs": 6877,
+    "startMs": 7000,
+    "endMs": 7320,
+    "timestampMs": 7160,
     "confidence": null
   },
   {
     "text": " لوحدها",
-    "startMs": 7053,
-    "endMs": 7460,
-    "timestampMs": 7257,
+    "startMs": 7360,
+    "endMs": 7927,
+    "timestampMs": 7644,
     "confidence": null
   }
 ]

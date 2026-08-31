@@ -3,119 +3,119 @@
     {
       "file": "ar01s1.mp3",
       "startSec": 0.7,
-      "durationSec": 1.8
+      "durationSec": 1.88
     },
     {
       "file": "ar01s2.mp3",
       "startSec": 3.3,
-      "durationSec": 2.46
+      "durationSec": 2.43
     },
     {
       "file": "ar01s3.mp3",
-      "startSec": 5.81,
-      "durationSec": 1.33
+      "startSec": 5.8,
+      "durationSec": 2.12
     }
   ],
   "02-yogurt-scramble": [
     {
       "file": "ar02s1.mp3",
       "startSec": 0.7,
-      "durationSec": 2.04
+      "durationSec": 2.69
     },
     {
       "file": "ar02s2.mp3",
       "startSec": 3.5,
-      "durationSec": 1.44
+      "durationSec": 2.04
     },
     {
       "file": "ar02s3.mp3",
       "startSec": 6,
-      "durationSec": 2.17
+      "durationSec": 2.93
     }
   ],
   "03-parmesan-crispy": [
     {
       "file": "ar03s1.mp3",
       "startSec": 0.7,
-      "durationSec": 2.22
+      "durationSec": 2.35
     },
     {
       "file": "ar03s2.mp3",
       "startSec": 3.4,
-      "durationSec": 2.22
+      "durationSec": 2.19
     },
     {
       "file": "ar03s3.mp3",
       "startSec": 6.1,
-      "durationSec": 1.85
+      "durationSec": 2.59
     }
   ],
   "04-easy-peel": [
     {
       "file": "ar04s1.mp3",
       "startSec": 0.6,
-      "durationSec": 1.85
+      "durationSec": 2.59
     },
     {
       "file": "ar04s2.mp3",
-      "startSec": 3.2,
-      "durationSec": 1.91
+      "startSec": 3.24,
+      "durationSec": 2.51
     },
     {
       "file": "ar04s3.mp3",
       "startSec": 6.2,
-      "durationSec": 1.62
+      "durationSec": 2.69
     }
   ],
   "05-chili-crisp": [
     {
       "file": "ar05s1.mp3",
       "startSec": 0.7,
-      "durationSec": 3.06
+      "durationSec": 2.51
     },
     {
       "file": "ar05s2.mp3",
-      "startSec": 3.81,
-      "durationSec": 1.85
+      "startSec": 3.5,
+      "durationSec": 2.27
     },
     {
       "file": "ar05s3.mp3",
       "startSec": 6.1,
-      "durationSec": 2.09
+      "durationSec": 2.93
     }
   ],
   "06-steam-lid-sunny": [
     {
       "file": "ar06s1.mp3",
       "startSec": 0.6,
-      "durationSec": 1.75
+      "durationSec": 2.77
     },
     {
       "file": "ar06s2.mp3",
-      "startSec": 3.2,
-      "durationSec": 2.04
+      "startSec": 3.42,
+      "durationSec": 2.19
     },
     {
       "file": "ar06s3.mp3",
       "startSec": 5.9,
-      "durationSec": 1.99
+      "durationSec": 2.19
     }
   ],
   "07-bottle-shake": [
     {
       "file": "ar07s1.mp3",
       "startSec": 0.7,
-      "durationSec": 1.57
+      "durationSec": 2.19
     },
     {
       "file": "ar07s2.mp3",
       "startSec": 3.4,
-      "durationSec": 1.52
+      "durationSec": 1.8
     },
     {
       "file": "ar07s3.mp3",
       "startSec": 6,
-      "durationSec": 1.67
+      "durationSec": 1.96
     }
   ]
 }

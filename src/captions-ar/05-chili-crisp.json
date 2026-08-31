@@ -2,78 +2,78 @@
   {
     "text": " الشطة",
     "startMs": 740,
-    "endMs": 1163,
-    "timestampMs": 952,
+    "endMs": 1206,
+    "timestampMs": 973,
     "confidence": null
   },
   {
     "text": " المقرمشة",
-    "startMs": 1480,
-    "endMs": 2098,
-    "timestampMs": 1789,
+    "startMs": 1206,
+    "endMs": 1886,
+    "timestampMs": 1546,
     "confidence": null
   },
   {
     "text": " الأول",
-    "startMs": 2098,
-    "endMs": 2521,
-    "timestampMs": 2310,
+    "startMs": 1886,
+    "endMs": 2352,
+    "timestampMs": 2119,
     "confidence": null
   },
   {
     "text": " في",
-    "startMs": 2521,
-    "endMs": 2749,
-    "timestampMs": 2635,
+    "startMs": 2352,
+    "endMs": 2603,
+    "timestampMs": 2478,
     "confidence": null
   },
   {
     "text": " الطاسة",
-    "startMs": 2749,
-    "endMs": 3237,
-    "timestampMs": 2993,
+    "startMs": 2603,
+    "endMs": 3140,
+    "timestampMs": 2872,
     "confidence": null
   },
   {
     "text": " والبيضة",
-    "startMs": 3850,
-    "endMs": 4349,
-    "timestampMs": 4100,
+    "startMs": 3560,
+    "endMs": 4263,
+    "timestampMs": 3912,
     "confidence": null
   },
   {
     "text": " بتتقلي",
-    "startMs": 4349,
-    "endMs": 4789,
-    "timestampMs": 4569,
+    "startMs": 4460,
+    "endMs": 5080,
+    "timestampMs": 4770,
     "confidence": null
   },
   {
     "text": " جواها",
-    "startMs": 4789,
-    "endMs": 5170,
-    "timestampMs": 4980,
+    "startMs": 5080,
+    "endMs": 5617,
+    "timestampMs": 5349,
     "confidence": null
   },
   {
     "text": " حراقة",
-    "startMs": 6220,
-    "endMs": 6677,
-    "timestampMs": 6449,
+    "startMs": 6240,
+    "endMs": 6925,
+    "timestampMs": 6583,
     "confidence": null
   },
   {
     "text": " ومقرمشة",
-    "startMs": 6677,
-    "endMs": 7274,
-    "timestampMs": 6976,
+    "startMs": 6925,
+    "endMs": 7820,
+    "timestampMs": 7373,
     "confidence": null
   },
   {
     "text": " وسحر",
-    "startMs": 7274,
-    "endMs": 7660,
-    "timestampMs": 7467,
+    "startMs": 8240,
+    "endMs": 8820,
+    "timestampMs": 8530,
     "confidence": null
   }
 ]

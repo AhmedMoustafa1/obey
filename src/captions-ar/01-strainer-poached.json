@@ -1,79 +1,79 @@
 [
   {
     "text": " اكسري",
-    "startMs": 940,
-    "endMs": 1195,
-    "timestampMs": 1068,
+    "startMs": 1100,
+    "endMs": 1450,
+    "timestampMs": 1275,
     "confidence": null
   },
   {
     "text": " البيضة",
-    "startMs": 1195,
-    "endMs": 1489,
-    "timestampMs": 1342,
+    "startMs": 1450,
+    "endMs": 1854,
+    "timestampMs": 1652,
     "confidence": null
   },
   {
     "text": " في",
-    "startMs": 1489,
-    "endMs": 1627,
-    "timestampMs": 1558,
+    "startMs": 1854,
+    "endMs": 2042,
+    "timestampMs": 1948,
     "confidence": null
   },
   {
     "text": " المصفاة",
-    "startMs": 1940,
-    "endMs": 2273,
-    "timestampMs": 2107,
+    "startMs": 2042,
+    "endMs": 2500,
+    "timestampMs": 2271,
     "confidence": null
   },
   {
     "text": " الميّة",
-    "startMs": 3340,
-    "endMs": 3708,
-    "timestampMs": 3524,
+    "startMs": 3400,
+    "endMs": 3907,
+    "timestampMs": 3654,
     "confidence": null
   },
   {
     "text": " الزيادة",
-    "startMs": 4040,
-    "endMs": 4521,
-    "timestampMs": 4281,
+    "startMs": 3907,
+    "endMs": 4569,
+    "timestampMs": 4238,
     "confidence": null
   },
   {
     "text": " بتنزل",
-    "startMs": 4521,
-    "endMs": 4888,
-    "timestampMs": 4705,
+    "startMs": 4569,
+    "endMs": 5076,
+    "timestampMs": 4823,
     "confidence": null
   },
   {
     "text": " لوحدها",
-    "startMs": 4888,
-    "endMs": 5312,
-    "timestampMs": 5100,
+    "startMs": 5076,
+    "endMs": 5660,
+    "timestampMs": 5368,
     "confidence": null
   },
   {
     "text": " أحلى",
-    "startMs": 5810,
-    "endMs": 6099,
-    "timestampMs": 5955,
+    "startMs": 5920,
+    "endMs": 6398,
+    "timestampMs": 6159,
     "confidence": null
   },
   {
     "text": " بيضة",
-    "startMs": 6099,
-    "endMs": 6388,
-    "timestampMs": 6244,
+    "startMs": 6398,
+    "endMs": 6875,
+    "timestampMs": 6637,
     "confidence": null
   },
   {
     "text": " بوشيه",
-    "startMs": 6388,
-    "endMs": 6730,
-    "timestampMs": 6559,
+    "startMs": 6875,
+    "endMs": 7440,
+    "timestampMs": 7158,
     "confidence": null
   },
   {

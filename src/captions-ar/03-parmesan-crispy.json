@@ -1,86 +1,86 @@
 [
   {
     "text": " البارميزان",
-    "startMs": 800,
-    "endMs": 1506,
-    "timestampMs": 1153,
+    "startMs": 740,
+    "endMs": 1541,
+    "timestampMs": 1141,
     "confidence": null
   },
   {
     "text": " الأول",
-    "startMs": 1506,
-    "endMs": 1905,
-    "timestampMs": 1706,
+    "startMs": 1541,
+    "endMs": 1994,
+    "timestampMs": 1768,
     "confidence": null
   },
   {
     "text": " في",
-    "startMs": 1905,
-    "endMs": 2120,
-    "timestampMs": 2013,
+    "startMs": 1994,
+    "endMs": 2238,
+    "timestampMs": 2116,
     "confidence": null
   },
   {
     "text": " الطاسة",
-    "startMs": 2120,
-    "endMs": 2580,
-    "timestampMs": 2350,
+    "startMs": 2238,
+    "endMs": 2760,
+    "timestampMs": 2499,
     "confidence": null
   },
   {
     "text": " واكسري",
-    "startMs": 3440,
-    "endMs": 3848,
-    "timestampMs": 3644,
+    "startMs": 3840,
+    "endMs": 4273,
+    "timestampMs": 4057,
     "confidence": null
   },
   {
     "text": " البيضة",
-    "startMs": 3848,
-    "endMs": 4256,
-    "timestampMs": 4052,
+    "startMs": 4273,
+    "endMs": 4706,
+    "timestampMs": 4490,
     "confidence": null
   },
   {
     "text": " فوقيه",
-    "startMs": 4256,
-    "endMs": 4610,
-    "timestampMs": 4433,
+    "startMs": 4706,
+    "endMs": 5081,
+    "timestampMs": 4894,
     "confidence": null
   },
   {
     "text": " على",
-    "startMs": 4610,
-    "endMs": 4855,
-    "timestampMs": 4733,
+    "startMs": 5081,
+    "endMs": 5340,
+    "timestampMs": 5211,
     "confidence": null
   },
   {
     "text": " طول",
-    "startMs": 4855,
-    "endMs": 5100,
-    "timestampMs": 4978,
+    "startMs": 5340,
+    "endMs": 5600,
+    "timestampMs": 5470,
     "confidence": null
   },
   {
     "text": " أطراف",
-    "startMs": 6140,
-    "endMs": 6587,
-    "timestampMs": 6364,
+    "startMs": 6200,
+    "endMs": 6953,
+    "timestampMs": 6577,
     "confidence": null
   },
   {
     "text": " مقرمشة",
-    "startMs": 6587,
-    "endMs": 7102,
-    "timestampMs": 6845,
+    "startMs": 6953,
+    "endMs": 7823,
+    "timestampMs": 7388,
     "confidence": null
   },
   {
     "text": " تجنن",
-    "startMs": 7102,
-    "endMs": 7480,
-    "timestampMs": 7291,
+    "startMs": 7823,
+    "endMs": 8460,
+    "timestampMs": 8142,
     "confidence": null
   }
 ]

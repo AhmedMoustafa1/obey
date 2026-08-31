@@ -1,79 +1,79 @@
 [
   {
     "text": " اكسري",
-    "startMs": 740,
-    "endMs": 1028,
-    "timestampMs": 884,
+    "startMs": 1040,
+    "endMs": 1419,
+    "timestampMs": 1230,
     "confidence": null
   },
   {
     "text": " البيض",
-    "startMs": 1028,
-    "endMs": 1317,
-    "timestampMs": 1173,
+    "startMs": 1419,
+    "endMs": 1797,
+    "timestampMs": 1608,
     "confidence": null
   },
   {
     "text": " في",
-    "startMs": 1317,
-    "endMs": 1472,
-    "timestampMs": 1395,
+    "startMs": 1797,
+    "endMs": 2001,
+    "timestampMs": 1899,
     "confidence": null
   },
   {
     "text": " إزازة",
-    "startMs": 1472,
-    "endMs": 1760,
-    "timestampMs": 1616,
+    "startMs": 2001,
+    "endMs": 2380,
+    "timestampMs": 2191,
     "confidence": null
   },
   {
     "text": " رجّي",
-    "startMs": 3480,
-    "endMs": 3753,
-    "timestampMs": 3617,
+    "startMs": 3460,
+    "endMs": 3907,
+    "timestampMs": 3684,
     "confidence": null
   },
   {
     "text": " رجّي",
-    "startMs": 3753,
-    "endMs": 4027,
-    "timestampMs": 3890,
+    "startMs": 3907,
+    "endMs": 4353,
+    "timestampMs": 4130,
     "confidence": null
   },
   {
     "text": " رجّي",
-    "startMs": 4027,
-    "endMs": 4300,
-    "timestampMs": 4164,
+    "startMs": 4353,
+    "endMs": 4800,
+    "timestampMs": 4577,
     "confidence": null
   },
   {
     "text": " أطرى",
-    "startMs": 6020,
-    "endMs": 6262,
-    "timestampMs": 6141,
+    "startMs": 6120,
+    "endMs": 6450,
+    "timestampMs": 6285,
     "confidence": null
   },
   {
     "text": " سكرامبل",
-    "startMs": 6262,
-    "endMs": 6636,
-    "timestampMs": 6449,
+    "startMs": 6820,
+    "endMs": 7330,
+    "timestampMs": 7075,
     "confidence": null
   },
   {
     "text": " في",
-    "startMs": 6636,
-    "endMs": 6790,
-    "timestampMs": 6713,
+    "startMs": 7330,
+    "endMs": 7540,
+    "timestampMs": 7435,
     "confidence": null
   },
   {
     "text": " الدنيا",
-    "startMs": 6790,
-    "endMs": 7120,
-    "timestampMs": 6955,
+    "startMs": 7540,
+    "endMs": 7990,
+    "timestampMs": 7765,
     "confidence": null
   }
 ]
