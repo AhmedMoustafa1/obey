@@ -1,0 +1,46 @@
+{
+  "name": "obey",
+  "version": "1.0.0",
+  "description": "Remotion video studio — programmatic video editing in React",
+  "private": true,
+  "scripts": {
+    "dev": "remotion studio",
+    "render": "remotion render",
+    "still": "remotion still",
+    "bundle": "remotion bundle",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src",
+    "upgrade": "remotion upgrade"
+  },
+  "dependencies": {
+    "@remotion/animation-utils": "4.0.518",
+    "@remotion/captions": "4.0.518",
+    "@remotion/cli": "4.0.518",
+    "@remotion/fonts": "4.0.518",
+    "@remotion/gif": "4.0.518",
+    "@remotion/google-fonts": "4.0.518",
+    "@remotion/layout-utils": "4.0.518",
+    "@remotion/lottie": "4.0.518",
+    "@remotion/media-parser": "4.0.518",
+    "@remotion/media-utils": "4.0.518",
+    "@remotion/motion-blur": "4.0.518",
+    "@remotion/noise": "4.0.518",
+    "@remotion/paths": "4.0.518",
+    "@remotion/player": "4.0.518",
+    "@remotion/shapes": "4.0.518",
+    "@remotion/transitions": "4.0.518",
+    "@remotion/zod-types": "4.0.518",
+    "lottie-web": "^5.13.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "remotion": "4.0.518",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@remotion/eslint-config-flat": "4.0.518",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.5",
+    "eslint": "^9.39.5",
+    "typescript": "^5.7.3"
+  }
+}
