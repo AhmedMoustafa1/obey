@@ -1,93 +1,121 @@
 {
-  "00-intro": [
-    {
-      "file": "00a.mp3",
-      "startSec": 1.3,
-      "durationSec": 2.51
-    }
-  ],
   "01-strainer-poached": [
     {
-      "file": "01a.mp3",
-      "startSec": 0.4,
-      "durationSec": 3.11
+      "file": "01s1.mp3",
+      "startSec": 0.7,
+      "durationSec": 1.38
     },
     {
-      "file": "01b.mp3",
-      "startSec": 6.4,
-      "durationSec": 1.8
+      "file": "01s2.mp3",
+      "startSec": 3.3,
+      "durationSec": 1.52
+    },
+    {
+      "file": "01s3.mp3",
+      "startSec": 5.8,
+      "durationSec": 1.44
     }
   ],
   "02-yogurt-scramble": [
     {
-      "file": "02a.mp3",
-      "startSec": 0.4,
-      "durationSec": 3.37
+      "file": "02s1.mp3",
+      "startSec": 0.7,
+      "durationSec": 2.17
     },
     {
-      "file": "02b.mp3",
-      "startSec": 6.3,
-      "durationSec": 2.46
+      "file": "02s2.mp3",
+      "startSec": 3.5,
+      "durationSec": 1.15
+    },
+    {
+      "file": "02s3.mp3",
+      "startSec": 6,
+      "durationSec": 1.8
     }
   ],
   "03-parmesan-crispy": [
     {
-      "file": "03a.mp3",
-      "startSec": 0.4,
-      "durationSec": 3.6
+      "file": "03s1.mp3",
+      "startSec": 0.7,
+      "durationSec": 1.44
     },
     {
-      "file": "03b.mp3",
-      "startSec": 6.13,
-      "durationSec": 3.42
+      "file": "03s2.mp3",
+      "startSec": 3.4,
+      "durationSec": 1.62
+    },
+    {
+      "file": "03s3.mp3",
+      "startSec": 6.1,
+      "durationSec": 1.44
     }
   ],
   "04-easy-peel": [
     {
-      "file": "04a.mp3",
-      "startSec": 0.3,
-      "durationSec": 4.73
+      "file": "04s1.mp3",
+      "startSec": 0.6,
+      "durationSec": 1.33
     },
     {
-      "file": "04b.mp3",
-      "startSec": 6,
-      "durationSec": 2.69
+      "file": "04s2.mp3",
+      "startSec": 3.2,
+      "durationSec": 1.57
+    },
+    {
+      "file": "04s3.mp3",
+      "startSec": 6.2,
+      "durationSec": 1.44
     }
   ],
   "05-chili-crisp": [
     {
-      "file": "05a.mp3",
-      "startSec": 0.4,
-      "durationSec": 3.47
+      "file": "05s1.mp3",
+      "startSec": 0.7,
+      "durationSec": 1.8
     },
     {
-      "file": "05b.mp3",
-      "startSec": 6.3,
-      "durationSec": 2.59
+      "file": "05s2.mp3",
+      "startSec": 3.5,
+      "durationSec": 1.7
+    },
+    {
+      "file": "05s3.mp3",
+      "startSec": 6.1,
+      "durationSec": 1.67
     }
   ],
   "06-steam-lid-sunny": [
     {
-      "file": "06a.mp3",
-      "startSec": 0.3,
-      "durationSec": 3.42
+      "file": "06s1.mp3",
+      "startSec": 0.6,
+      "durationSec": 1.38
     },
     {
-      "file": "06b.mp3",
-      "startSec": 6,
-      "durationSec": 2.12
+      "file": "06s2.mp3",
+      "startSec": 3.2,
+      "durationSec": 1.85
+    },
+    {
+      "file": "06s3.mp3",
+      "startSec": 5.9,
+      "durationSec": 1.33
     }
   ],
   "07-bottle-shake": [
     {
-      "file": "07a.mp3",
-      "startSec": 0.4,
-      "durationSec": 3
+      "file": "07s1.mp3",
+      "startSec": 0.7,
+      "durationSec": 1.38
     },
     {
-      "file": "07b.mp3",
-      "startSec": 6.18,
-      "durationSec": 3.37
+      "file": "07s2.mp3",
+      "startSec": 3.4,
+      "durationSec": 1.75
+    },
+    {
+      "file": "07s3.mp3",
+      "startSec": 6,
+      "durationSec": 1.38
     }
   ]
 }

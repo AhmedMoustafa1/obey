@@ -1,79 +1,79 @@
 [
   {
     "text": " Crack",
-    "startMs": 700,
-    "endMs": 1196,
-    "timestampMs": 948,
+    "startMs": 800,
+    "endMs": 994,
+    "timestampMs": 897,
     "confidence": null
   },
   {
     "text": " them",
-    "startMs": 1196,
-    "endMs": 1616,
-    "timestampMs": 1406,
+    "startMs": 994,
+    "endMs": 1158,
+    "timestampMs": 1076,
     "confidence": null
   },
   {
     "text": " into",
-    "startMs": 1616,
-    "endMs": 2036,
-    "timestampMs": 1826,
+    "startMs": 1158,
+    "endMs": 1322,
+    "timestampMs": 1240,
     "confidence": null
   },
   {
     "text": " a",
-    "startMs": 2036,
-    "endMs": 2227,
-    "timestampMs": 2132,
+    "startMs": 1322,
+    "endMs": 1442,
+    "timestampMs": 1382,
     "confidence": null
   },
   {
     "text": " bottle",
-    "startMs": 2227,
-    "endMs": 2800,
-    "timestampMs": 2514,
+    "startMs": 1442,
+    "endMs": 1665,
+    "timestampMs": 1554,
     "confidence": null
   },
   {
     "text": " Shake",
-    "startMs": 3400,
-    "endMs": 4100,
-    "timestampMs": 3750,
+    "startMs": 3500,
+    "endMs": 3620,
+    "timestampMs": 3560,
     "confidence": null
   },
   {
     "text": " shake",
-    "startMs": 4100,
-    "endMs": 4800,
-    "timestampMs": 4450,
+    "startMs": 3620,
+    "endMs": 3740,
+    "timestampMs": 3680,
     "confidence": null
   },
   {
     "text": " SHAKE",
-    "startMs": 4800,
-    "endMs": 5500,
-    "timestampMs": 5150,
+    "startMs": 4020,
+    "endMs": 4140,
+    "timestampMs": 4080,
     "confidence": null
   },
   {
     "text": " The",
-    "startMs": 6000,
-    "endMs": 6367,
-    "timestampMs": 6184,
+    "startMs": 6080,
+    "endMs": 6242,
+    "timestampMs": 6161,
     "confidence": null
   },
   {
     "text": " fluffiest",
-    "startMs": 6367,
-    "endMs": 7224,
-    "timestampMs": 6796,
+    "startMs": 6242,
+    "endMs": 6619,
+    "timestampMs": 6431,
     "confidence": null
   },
   {
     "text": " scramble",
-    "startMs": 7224,
-    "endMs": 8000,
-    "timestampMs": 7612,
+    "startMs": 6619,
+    "endMs": 6960,
+    "timestampMs": 6790,
     "confidence": null
   }
 ]

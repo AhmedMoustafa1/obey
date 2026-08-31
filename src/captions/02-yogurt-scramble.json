@@ -2,106 +2,106 @@
   {
     "text": " A",
     "startMs": 700,
-    "endMs": 858,
-    "timestampMs": 779,
+    "endMs": 820,
+    "timestampMs": 760,
     "confidence": null
   },
   {
     "text": " spoonful",
-    "startMs": 858,
-    "endMs": 1456,
-    "timestampMs": 1157,
+    "startMs": 820,
+    "endMs": 1210,
+    "timestampMs": 1015,
     "confidence": null
   },
   {
     "text": " of",
-    "startMs": 1456,
-    "endMs": 1677,
-    "timestampMs": 1566,
+    "startMs": 1210,
+    "endMs": 1354,
+    "timestampMs": 1282,
     "confidence": null
   },
   {
     "text": " yogurt",
-    "startMs": 1677,
-    "endMs": 2149,
-    "timestampMs": 1913,
+    "startMs": 1354,
+    "endMs": 1662,
+    "timestampMs": 1508,
     "confidence": null
   },
   {
     "text": " in",
-    "startMs": 2149,
-    "endMs": 2370,
-    "timestampMs": 2260,
+    "startMs": 1662,
+    "endMs": 1806,
+    "timestampMs": 1734,
     "confidence": null
   },
   {
     "text": " the",
-    "startMs": 2370,
-    "endMs": 2653,
-    "timestampMs": 2512,
+    "startMs": 1806,
+    "endMs": 1991,
+    "timestampMs": 1899,
     "confidence": null
   },
   {
     "text": " eggs",
-    "startMs": 2653,
-    "endMs": 3000,
-    "timestampMs": 2827,
+    "startMs": 1991,
+    "endMs": 2217,
+    "timestampMs": 2104,
     "confidence": null
   },
   {
     "text": " Whisk",
-    "startMs": 3500,
-    "endMs": 4118,
-    "timestampMs": 3809,
+    "startMs": 3520,
+    "endMs": 3748,
+    "timestampMs": 3634,
     "confidence": null
   },
   {
     "text": " it",
-    "startMs": 4118,
-    "endMs": 4450,
-    "timestampMs": 4284,
+    "startMs": 3748,
+    "endMs": 3870,
+    "timestampMs": 3809,
     "confidence": null
   },
   {
     "text": " right",
-    "startMs": 4450,
-    "endMs": 5068,
-    "timestampMs": 4759,
+    "startMs": 3870,
+    "endMs": 4098,
+    "timestampMs": 3984,
     "confidence": null
   },
   {
     "text": " in",
-    "startMs": 5068,
-    "endMs": 5400,
-    "timestampMs": 5234,
+    "startMs": 4098,
+    "endMs": 4220,
+    "timestampMs": 4159,
     "confidence": null
   },
   {
     "text": " Low",
     "startMs": 6000,
-    "endMs": 6356,
-    "timestampMs": 6178,
+    "endMs": 6150,
+    "timestampMs": 6075,
     "confidence": null
   },
   {
     "text": " heat,",
-    "startMs": 6356,
-    "endMs": 6792,
-    "timestampMs": 6574,
+    "startMs": 6150,
+    "endMs": 6333,
+    "timestampMs": 6242,
     "confidence": null
   },
   {
     "text": " big",
-    "startMs": 6792,
-    "endMs": 7148,
-    "timestampMs": 6970,
+    "startMs": 6333,
+    "endMs": 6483,
+    "timestampMs": 6408,
     "confidence": null
   },
   {
     "text": " patience",
-    "startMs": 7148,
-    "endMs": 7900,
-    "timestampMs": 7524,
+    "startMs": 6820,
+    "endMs": 7137,
+    "timestampMs": 6979,
     "confidence": null
   }
 ]

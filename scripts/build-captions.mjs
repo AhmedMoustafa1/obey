@@ -1,20 +1,53 @@
 // Build src/captions/<slug>.json (Caption[] for @remotion/captions) for the
-// EggHacks edit. Two sources, merged per clip:
+// EggHacks edit. Captions transcribe what is actually heard, word-synced:
 //
-//  1. Real dialogue (from ElevenLabs Scribe transcripts), word-aligned to the
-//     clip audio by RMS energy analysis of the extracted 16kHz mono WAVs.
-//  2. Step captions (storyboard action text) with authored time windows,
-//     words spread evenly inside each window for TikTok-style word pop.
+//  1. The voiceover lines (public/vo/*.mp3): each line's known text is aligned
+//     to its own audio by RMS energy analysis (clean studio speech aligns
+//     tightly), then shifted by the line's placement from src/vo-manifest.json.
+//  2. Real footage dialogue/SFX: "Seven egg hacks." + SPLAT! in the intro and
+//     the "Wow!" in the strainer clip, aligned to the clip audio.
 //
-// Usage: node scripts/build-captions.mjs <wav-dir>
+// Usage: node scripts/build-captions.mjs <clip-wav-dir> <vo-wav-dir>
+//   clip-wav-dir: 16kHz mono WAVs extracted from public/clips/*.mp4
+//   vo-wav-dir:   16kHz mono WAVs extracted from public/vo/*.mp3
 import {readFileSync, writeFileSync, mkdirSync} from 'node:fs';
 import path from 'node:path';
 
-const wavDir = process.argv[2];
-if (!wavDir) {
-  console.error('Usage: node scripts/build-captions.mjs <wav-dir>');
+const clipWavDir = process.argv[2];
+const voWavDir = process.argv[3];
+if (!clipWavDir || !voWavDir) {
+  console.error('Usage: node scripts/build-captions.mjs <clip-wav-dir> <vo-wav-dir>');
   process.exit(1);
 }
+
+const voManifest = JSON.parse(
+  readFileSync(path.join(process.cwd(), 'src', 'vo-manifest.json'), 'utf8'),
+);
+
+// Must match the generated audio verbatim — the VO speaks the captions.
+const VO_TEXTS = {
+  '01s1.mp3': 'Crack it into a strainer',
+  '01s2.mp3': 'Watery whites drain away',
+  '01s3.mp3': 'The perfect poach',
+  '02s1.mp3': 'A spoonful of yogurt in the eggs',
+  '02s2.mp3': 'Whisk it right in',
+  '02s3.mp3': 'Low heat, big patience',
+  '03s1.mp3': 'Parmesan goes in first',
+  '03s2.mp3': 'Crack the egg right on top',
+  '03s3.mp3': 'Lacy crispy edges',
+  '04s1.mp3': 'When peeling goes wrong…',
+  '04s2.mp3': 'Teta steams them instead',
+  '04s3.mp3': 'The shell slips right off',
+  '05s1.mp3': 'Chili crisp in the pan first',
+  '05s2.mp3': 'The egg fries inside it',
+  '05s3.mp3': 'Spicy crispy magic',
+  '06s1.mp3': 'No more broken yolks',
+  '06s2.mp3': 'Splash of water, lid on',
+  '06s3.mp3': 'Steam does the rest',
+  '07s1.mp3': 'Crack them into a bottle',
+  '07s2.mp3': 'Shake shake SHAKE',
+  '07s3.mp3': 'The fluffiest scramble',
+};
 
 const SAMPLE_RATE = 16000;
 const HOP_MS = 20;
@@ -50,7 +83,7 @@ const envelope = (samples) => {
   return frames;
 };
 
-const findIslands = (env, thresh) => {
+const findIslands = (env, thresh, {mergeGapMs = 260, minMs = 150} = {}) => {
   const raw = [];
   let start = null;
   for (let i = 0; i < env.length; i++) {
@@ -63,10 +96,10 @@ const findIslands = (env, thresh) => {
   const merged = [];
   for (const isl of raw) {
     const prev = merged[merged.length - 1];
-    if (prev && isl.startMs - prev.endMs < 260) prev.endMs = isl.endMs;
+    if (prev && isl.startMs - prev.endMs < mergeGapMs) prev.endMs = isl.endMs;
     else merged.push({...isl});
   }
-  return merged.filter((i) => i.endMs - i.startMs >= 150);
+  return merged.filter((i) => i.endMs - i.startMs >= minMs);
 };
 
 const peakIn = (env, isl) => {
@@ -77,13 +110,13 @@ const peakIn = (env, isl) => {
   return peak;
 };
 
-const islandsOf = (slug) => {
-  const env = envelope(readWavSamples(path.join(wavDir, `${slug}.wav`)));
+const islandsOfFile = (file, opts) => {
+  const env = envelope(readWavSamples(file));
   const sorted = [...env].sort((a, b) => a - b);
   const floor = sorted[Math.floor(sorted.length * 0.2)];
   const p95 = sorted[Math.floor(sorted.length * 0.95)];
-  let islands = findIslands(env, floor + 0.22 * (p95 - floor));
-  if (islands.length === 0) islands = findIslands(env, floor + 0.1 * (p95 - floor));
+  let islands = findIslands(env, floor + 0.22 * (p95 - floor), opts);
+  if (islands.length === 0) islands = findIslands(env, floor + 0.1 * (p95 - floor), opts);
   return {env, islands};
 };
 
@@ -93,111 +126,109 @@ const loudestIslandIn = (env, islands, fromMs, toMs) => {
   return inWindow.reduce((a, b) => (peakIn(env, b) > peakIn(env, a) ? b : a));
 };
 
-// Spread words evenly across [startMs, endMs], weighted by word length.
-const spreadWords = (text, startMs, endMs) => {
+const wordWeights = (words) =>
+  words.map((w) => w.replace(/[^\p{L}\p{N}]/gu, '').length + 1.5);
+
+// Distribute words across speech islands in order, proportionally to length.
+// Words flow through islands like text through columns: when an island is
+// full, the next word starts at the next island (so caption pauses land on
+// the audio's real pauses).
+const alignWordsToIslands = (text, islands) => {
   const words = text.trim().split(/\s+/).filter(Boolean);
-  const weights = words.map((w) => w.replace(/[^\p{L}\p{N}]/gu, '').length + 1.5);
-  const total = weights.reduce((a, b) => a + b, 0);
-  const span = endMs - startMs;
-  const captions = [];
-  let cursor = startMs;
-  for (let i = 0; i < words.length; i++) {
-    const dur = (weights[i] / total) * span;
-    captions.push({
-      text: ' ' + words[i],
-      startMs: Math.round(cursor),
-      endMs: Math.round(cursor + dur),
-      timestampMs: Math.round(cursor + dur / 2),
-      confidence: null,
-    });
-    cursor += dur;
+  const weights = wordWeights(words);
+  const totalWeight = weights.reduce((a, b) => a + b, 0);
+  const totalMs = islands.reduce((s, i) => s + (i.endMs - i.startMs), 0);
+
+  const result = [];
+  let islandIdx = 0;
+  let cursor = islands[0].startMs;
+  for (let w = 0; w < words.length; w++) {
+    const dur = (weights[w] / totalWeight) * totalMs;
+    let isl = islands[islandIdx];
+    // If less than half this word fits in the current island, move on.
+    if (cursor + dur / 2 > isl.endMs && islandIdx < islands.length - 1) {
+      islandIdx++;
+      isl = islands[islandIdx];
+      cursor = isl.startMs;
+    }
+    const startMs = cursor;
+    const endMs = Math.min(Math.max(cursor + dur, startMs + 120), isl.endMs + 200);
+    result.push({word: words[w], startMs: Math.round(startMs), endMs: Math.round(endMs)});
+    cursor = endMs;
   }
-  return captions;
+  return result;
 };
 
-// ---- Authored step captions (from the user's storyboards), seconds. ----
-const STEPS = {
+const toCaption = (word, startMs, endMs) => ({
+  text: ' ' + word,
+  startMs,
+  endMs,
+  timestampMs: Math.round((startMs + endMs) / 2),
+  confidence: null,
+});
+
+// ---- Voiceover captions, word-synced to the VO audio. ----
+const out = {
   '00-intro': [],
-  '01-strainer-poached': [
-    {text: 'Crack it into a strainer', from: 0.7, to: 2.7},
-    {text: 'Watery whites drain away', from: 3.3, to: 5.3},
-    {text: 'The perfect poach', from: 5.8, to: 7.4},
-  ],
-  '02-yogurt-scramble': [
-    {text: 'A spoonful of yogurt in the eggs', from: 0.7, to: 3.0},
-    {text: 'Whisk it right in', from: 3.5, to: 5.4},
-    {text: 'Low heat, big patience', from: 6.0, to: 7.9},
-  ],
-  '03-parmesan-crispy': [
-    {text: 'Parmesan goes in first', from: 0.7, to: 2.8},
-    {text: 'Crack the egg right on top', from: 3.4, to: 5.6},
-    {text: 'Lacy crispy edges', from: 6.1, to: 7.9},
-  ],
-  '04-easy-peel': [
-    {text: 'When peeling goes wrong…', from: 0.6, to: 2.6},
-    {text: 'Teta steams them instead', from: 3.2, to: 5.4},
-    {text: 'The shell slips right off', from: 6.2, to: 8.4},
-  ],
-  '05-chili-crisp': [
-    {text: 'Chili crisp in the pan first', from: 0.7, to: 2.9},
-    {text: 'The egg fries inside it', from: 3.5, to: 5.6},
-    {text: 'Spicy crispy magic', from: 6.1, to: 7.9},
-  ],
-  '06-steam-lid-sunny': [
-    {text: 'No more broken yolks', from: 0.6, to: 2.6},
-    {text: 'Splash of water, lid on', from: 3.2, to: 5.4},
-    {text: 'Steam does the rest', from: 5.9, to: 7.8},
-  ],
-  '07-bottle-shake': [
-    {text: 'Crack them into a bottle', from: 0.7, to: 2.8},
-    {text: 'Shake shake SHAKE', from: 3.4, to: 5.5},
-    {text: 'The fluffiest scramble', from: 6.0, to: 8.0},
-  ],
+  '01-strainer-poached': [],
+  '02-yogurt-scramble': [],
+  '03-parmesan-crispy': [],
+  '04-easy-peel': [],
+  '05-chili-crisp': [],
+  '06-steam-lid-sunny': [],
+  '07-bottle-shake': [],
 };
-
-const out = {};
-for (const [slug, steps] of Object.entries(STEPS)) {
-  out[slug] = steps.flatMap((s) => spreadWords(s.text, s.from * 1000, s.to * 1000));
+for (const [slug, lines] of Object.entries(voManifest)) {
+  for (const line of lines) {
+    const text = VO_TEXTS[line.file];
+    if (!text) throw new Error(`No VO text for ${line.file}`);
+    const {islands} = islandsOfFile(path.join(voWavDir, line.file.replace(/\.mp3$/, '.wav')), {
+      mergeGapMs: 200,
+      minMs: 100,
+    });
+    const offset = line.startSec * 1000;
+    const aligned = alignWordsToIslands(text, islands.length ? islands : [
+      {startMs: 0, endMs: line.durationSec * 1000},
+    ]);
+    for (const {word, startMs, endMs} of aligned) {
+      out[slug].push(toCaption(word, Math.round(offset + startMs), Math.round(offset + endMs)));
+    }
+    console.log(
+      `${line.file}: ${islands.length} islands -> "${text.split(/\s+/)[0]}…" ${Math.round(offset + aligned[0].startMs)}–${Math.round(offset + aligned[aligned.length - 1].endMs)}ms`,
+    );
+  }
 }
 
-// ---- Real dialogue, aligned to audio. ----
+// ---- Real footage dialogue/SFX captions (aligned to the clip audio). ----
 
-// Intro: "Seven egg hacks." on the first strong island, then SPLAT! on the
-// loudest burst in the 3.0–5.6s window (the egg hitting Mom's forehead).
+// Intro: Mom's real "Seven egg hacks." + SPLAT! on the egg impact.
 {
-  const {env, islands} = islandsOf('00-intro');
-  console.log('00-intro islands:', islands.map((i) => `${i.startMs}-${i.endMs}`).join(', '));
+  const {env, islands} = islandsOfFile(path.join(clipWavDir, '00-intro.wav'));
   const speech = islands.find((i) => i.startMs < 3000) ?? {startMs: 500, endMs: 2100};
   const lineEnd = Math.min(speech.endMs, speech.startMs + 1900);
-  out['00-intro'].push(...spreadWords('Seven egg hacks.', speech.startMs, lineEnd));
+  const aligned = alignWordsToIslands('Seven egg hacks.', [
+    {startMs: speech.startMs, endMs: lineEnd},
+  ]);
+  for (const {word, startMs, endMs} of aligned) {
+    out['00-intro'].push(toCaption(word, startMs, endMs));
+  }
   const splat = loudestIslandIn(env, islands, 3000, 5600);
   if (splat) {
     const start = Math.max(splat.startMs, 3000);
-    out['00-intro'].push({
-      text: ' SPLAT!',
-      startMs: Math.round(start),
-      endMs: Math.round(start + 1000),
-      timestampMs: Math.round(start + 500),
-      confidence: null,
-    });
+    out['00-intro'].push(toCaption('SPLAT!', Math.round(start), Math.round(start + 1000)));
     console.log('00-intro SPLAT at', Math.round(start));
   }
 }
 
-// Strainer: "Wow!" on the loudest island in the last 2.5 seconds (the reveal).
+// Strainer: the real "Wow!" on the reveal.
 {
-  const {env, islands} = islandsOf('01-strainer-poached');
-  console.log('01-strainer islands:', islands.map((i) => `${i.startMs}-${i.endMs}`).join(', '));
+  const {env, islands} = islandsOfFile(path.join(clipWavDir, '01-strainer-poached.wav'));
   const wow = loudestIslandIn(env, islands, 7600, 10000);
   if (wow) {
     const start = Math.max(wow.startMs, 7600);
-    out['01-strainer-poached'].push({
-      text: ' Wow!',
-      startMs: Math.round(start),
-      endMs: Math.round(Math.min(start + 800, wow.endMs + 300)),
-      timestampMs: Math.round(start + 400),
-      confidence: null,
-    });
+    out['01-strainer-poached'].push(
+      toCaption('Wow!', Math.round(start), Math.round(Math.min(start + 800, wow.endMs + 300))),
+    );
     console.log('01-strainer Wow! at', Math.round(start));
   }
 }

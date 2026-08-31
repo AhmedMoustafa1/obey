@@ -1,86 +1,86 @@
 [
   {
     "text": " Crack",
-    "startMs": 700,
-    "endMs": 1173,
-    "timestampMs": 936,
+    "startMs": 760,
+    "endMs": 977,
+    "timestampMs": 869,
     "confidence": null
   },
   {
     "text": " it",
-    "startMs": 1173,
-    "endMs": 1427,
-    "timestampMs": 1300,
+    "startMs": 977,
+    "endMs": 1097,
+    "timestampMs": 1037,
     "confidence": null
   },
   {
     "text": " into",
-    "startMs": 1427,
-    "endMs": 1827,
-    "timestampMs": 1627,
+    "startMs": 1097,
+    "endMs": 1281,
+    "timestampMs": 1189,
     "confidence": null
   },
   {
     "text": " a",
-    "startMs": 1827,
-    "endMs": 2009,
-    "timestampMs": 1918,
+    "startMs": 1281,
+    "endMs": 1401,
+    "timestampMs": 1341,
     "confidence": null
   },
   {
     "text": " strainer",
-    "startMs": 2009,
-    "endMs": 2700,
-    "timestampMs": 2355,
+    "startMs": 1401,
+    "endMs": 1719,
+    "timestampMs": 1560,
     "confidence": null
   },
   {
     "text": " Watery",
-    "startMs": 3300,
-    "endMs": 3856,
-    "timestampMs": 3578,
+    "startMs": 3340,
+    "endMs": 3668,
+    "timestampMs": 3504,
     "confidence": null
   },
   {
     "text": " whites",
-    "startMs": 3856,
-    "endMs": 4411,
-    "timestampMs": 4133,
+    "startMs": 3668,
+    "endMs": 3996,
+    "timestampMs": 3832,
     "confidence": null
   },
   {
     "text": " drain",
-    "startMs": 4411,
-    "endMs": 4893,
-    "timestampMs": 4652,
+    "startMs": 3996,
+    "endMs": 4280,
+    "timestampMs": 4138,
     "confidence": null
   },
   {
     "text": " away",
-    "startMs": 4893,
-    "endMs": 5300,
-    "timestampMs": 5096,
+    "startMs": 4280,
+    "endMs": 4520,
+    "timestampMs": 4400,
     "confidence": null
   },
   {
     "text": " The",
-    "startMs": 5800,
-    "endMs": 6169,
-    "timestampMs": 5985,
+    "startMs": 5880,
+    "endMs": 6120,
+    "timestampMs": 6000,
     "confidence": null
   },
   {
     "text": " perfect",
-    "startMs": 6169,
-    "endMs": 6867,
-    "timestampMs": 6518,
+    "startMs": 6120,
+    "endMs": 6573,
+    "timestampMs": 6347,
     "confidence": null
   },
   {
     "text": " poach",
-    "startMs": 6867,
-    "endMs": 7400,
-    "timestampMs": 7133,
+    "startMs": 6573,
+    "endMs": 6920,
+    "timestampMs": 6747,
     "confidence": null
   },
   {

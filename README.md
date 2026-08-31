@@ -35,7 +35,12 @@ Render the main edit: `npx remotion render EggHacks out/seven-egg-hacks.mp4`
 
 ### Voiceover pipeline
 
-The Mom narration lives in `public/vo/*.mp3` (one file per line, generated with ElevenLabs — voice "Olivia", model `eleven_multilingual_v2`). `node scripts/build-vo-manifest.mjs` measures each file's duration and writes `src/vo-manifest.json` with per-line start times (hard sync caps keep the intro line ahead of the SPLAT and hack 1's closer ahead of the real "Wow!"). The composition plays each line, softens the clip's own audio 30% under it, and ducks the music. To change a line: regenerate its mp3, drop it in `public/vo/`, re-run the manifest script.
+The Mom narration **speaks the on-screen captions verbatim** — 21 lines (7 hacks × 3 steps) in `public/vo/*.mp3` (ElevenLabs, voice "Olivia", model `eleven_multilingual_v2`), named `<clip>s<step>.mp3`. Pipeline, in order:
+
+1. `node scripts/build-vo-manifest.mjs` — measures each mp3 and writes `src/vo-manifest.json`; each line's start is pinned to its caption window (flags any line that would overrun the next window).
+2. `node scripts/build-captions.mjs <clip-wav-dir> <vo-wav-dir>` — re-times each caption's words to the VO audio by RMS energy alignment, so words pop exactly as they're spoken. Footage-audio captions (the intro's "Seven egg hacks." + SPLAT!, hack 1's "Wow!") are aligned to the clip WAVs instead. The intro has no VO — its captions transcribe the real footage audio.
+
+The composition plays each line, softens the clip's own audio 30% under it, and ducks the music. To change a line: update its text in both scripts, regenerate the mp3 into `public/vo/`, re-run both scripts, re-render.
 
 ## Installed Remotion packages
 

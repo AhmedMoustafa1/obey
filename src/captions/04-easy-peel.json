@@ -1,93 +1,93 @@
 [
   {
     "text": " When",
-    "startMs": 600,
-    "endMs": 1023,
-    "timestampMs": 812,
+    "startMs": 660,
+    "endMs": 846,
+    "timestampMs": 753,
     "confidence": null
   },
   {
     "text": " peeling",
-    "startMs": 1023,
-    "endMs": 1677,
-    "timestampMs": 1350,
+    "startMs": 846,
+    "endMs": 1134,
+    "timestampMs": 990,
     "confidence": null
   },
   {
     "text": " goes",
-    "startMs": 1677,
-    "endMs": 2100,
-    "timestampMs": 1888,
+    "startMs": 1134,
+    "endMs": 1320,
+    "timestampMs": 1227,
     "confidence": null
   },
   {
     "text": " wrong…",
-    "startMs": 2100,
-    "endMs": 2600,
-    "timestampMs": 2350,
+    "startMs": 1320,
+    "endMs": 1540,
+    "timestampMs": 1430,
     "confidence": null
   },
   {
     "text": " Teta",
-    "startMs": 3200,
-    "endMs": 3648,
-    "timestampMs": 3424,
+    "startMs": 3280,
+    "endMs": 3488,
+    "timestampMs": 3384,
     "confidence": null
   },
   {
     "text": " steams",
-    "startMs": 3648,
-    "endMs": 4259,
-    "timestampMs": 3954,
+    "startMs": 3488,
+    "endMs": 3771,
+    "timestampMs": 3630,
     "confidence": null
   },
   {
     "text": " them",
-    "startMs": 4259,
-    "endMs": 4707,
-    "timestampMs": 4483,
+    "startMs": 3771,
+    "endMs": 3979,
+    "timestampMs": 3875,
     "confidence": null
   },
   {
     "text": " instead",
-    "startMs": 4707,
-    "endMs": 5400,
-    "timestampMs": 5054,
+    "startMs": 3979,
+    "endMs": 4300,
+    "timestampMs": 4140,
     "confidence": null
   },
   {
     "text": " The",
-    "startMs": 6200,
-    "endMs": 6547,
-    "timestampMs": 6374,
+    "startMs": 6280,
+    "endMs": 6419,
+    "timestampMs": 6350,
     "confidence": null
   },
   {
     "text": " shell",
-    "startMs": 6547,
-    "endMs": 7049,
-    "timestampMs": 6798,
+    "startMs": 6419,
+    "endMs": 6620,
+    "timestampMs": 6520,
     "confidence": null
   },
   {
     "text": " slips",
-    "startMs": 7049,
-    "endMs": 7551,
-    "timestampMs": 7300,
+    "startMs": 6620,
+    "endMs": 6820,
+    "timestampMs": 6720,
     "confidence": null
   },
   {
     "text": " right",
-    "startMs": 7551,
-    "endMs": 8053,
-    "timestampMs": 7802,
+    "startMs": 6820,
+    "endMs": 7021,
+    "timestampMs": 6921,
     "confidence": null
   },
   {
     "text": " off",
-    "startMs": 8053,
-    "endMs": 8400,
-    "timestampMs": 8226,
+    "startMs": 7021,
+    "endMs": 7160,
+    "timestampMs": 7091,
     "confidence": null
   }
 ]

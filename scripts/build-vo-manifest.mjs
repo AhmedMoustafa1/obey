@@ -1,10 +1,10 @@
-// Measure public/vo/*.mp3 durations and compute placement for each voiceover
-// line inside its clip, writing src/vo-manifest.json for the EggHacks comp.
+// Measure public/vo/*.mp3 durations and write src/vo-manifest.json with each
+// voiceover line's placement inside its clip.
 //
-// Placement: each line has a desired start; lines with a hard end cap (the
-// intro must finish before the SPLAT at 4.6s, hack 1's closer before the real
-// "Wow!" at 9.08s, closers before the segment's end) are shifted earlier when
-// the measured audio would overrun.
+// The VO lines SPEAK the on-screen captions, so each line's start is pinned to
+// its caption window's start — captions then re-derive word timing from the
+// audio (scripts/build-captions.mjs), keeping text and voice in lockstep.
+// A line that runs long toward the next one is reported as an overrun.
 //
 // Usage: node scripts/build-vo-manifest.mjs
 import {parseMedia} from '@remotion/media-parser';
@@ -13,24 +13,31 @@ import {writeFileSync} from 'node:fs';
 import path from 'node:path';
 
 const LINES = [
-  {slug: '00-intro', file: '00a.mp3', start: 1.3, endCap: 4.55, minStart: 1.18},
-  {slug: '01-strainer-poached', file: '01a.mp3', start: 0.4, endCap: 6.0},
-  {slug: '01-strainer-poached', file: '01b.mp3', start: 6.4, endCap: 8.95, minStart: 5.7},
-  {slug: '02-yogurt-scramble', file: '02a.mp3', start: 0.4, endCap: 6.0},
-  {slug: '02-yogurt-scramble', file: '02b.mp3', start: 6.3, endCap: 9.55, minStart: 5.7},
-  {slug: '03-parmesan-crispy', file: '03a.mp3', start: 0.4, endCap: 6.0},
-  {slug: '03-parmesan-crispy', file: '03b.mp3', start: 6.3, endCap: 9.55, minStart: 5.7},
-  {slug: '04-easy-peel', file: '04a.mp3', start: 0.3, endCap: 6.0},
-  {slug: '04-easy-peel', file: '04b.mp3', start: 6.0, endCap: 9.55, minStart: 5.7},
-  {slug: '05-chili-crisp', file: '05a.mp3', start: 0.4, endCap: 6.0},
-  {slug: '05-chili-crisp', file: '05b.mp3', start: 6.3, endCap: 9.55, minStart: 5.7},
-  {slug: '06-steam-lid-sunny', file: '06a.mp3', start: 0.3, endCap: 6.0},
-  {slug: '06-steam-lid-sunny', file: '06b.mp3', start: 6.0, endCap: 9.55, minStart: 5.7},
-  {slug: '07-bottle-shake', file: '07a.mp3', start: 0.4, endCap: 6.0},
-  {slug: '07-bottle-shake', file: '07b.mp3', start: 6.2, endCap: 9.55, minStart: 5.7},
+  {slug: '01-strainer-poached', file: '01s1.mp3', start: 0.7, endCap: 3.1},
+  {slug: '01-strainer-poached', file: '01s2.mp3', start: 3.3, endCap: 5.6},
+  {slug: '01-strainer-poached', file: '01s3.mp3', start: 5.8, endCap: 8.9},
+  {slug: '02-yogurt-scramble', file: '02s1.mp3', start: 0.7, endCap: 3.3},
+  {slug: '02-yogurt-scramble', file: '02s2.mp3', start: 3.5, endCap: 5.8},
+  {slug: '02-yogurt-scramble', file: '02s3.mp3', start: 6.0, endCap: 9.55},
+  {slug: '03-parmesan-crispy', file: '03s1.mp3', start: 0.7, endCap: 3.2},
+  {slug: '03-parmesan-crispy', file: '03s2.mp3', start: 3.4, endCap: 5.9},
+  {slug: '03-parmesan-crispy', file: '03s3.mp3', start: 6.1, endCap: 9.55},
+  {slug: '04-easy-peel', file: '04s1.mp3', start: 0.6, endCap: 3.0},
+  {slug: '04-easy-peel', file: '04s2.mp3', start: 3.2, endCap: 6.0},
+  {slug: '04-easy-peel', file: '04s3.mp3', start: 6.2, endCap: 9.55},
+  {slug: '05-chili-crisp', file: '05s1.mp3', start: 0.7, endCap: 3.3},
+  {slug: '05-chili-crisp', file: '05s2.mp3', start: 3.5, endCap: 5.9},
+  {slug: '05-chili-crisp', file: '05s3.mp3', start: 6.1, endCap: 9.55},
+  {slug: '06-steam-lid-sunny', file: '06s1.mp3', start: 0.6, endCap: 3.0},
+  {slug: '06-steam-lid-sunny', file: '06s2.mp3', start: 3.2, endCap: 5.7},
+  {slug: '06-steam-lid-sunny', file: '06s3.mp3', start: 5.9, endCap: 9.55},
+  {slug: '07-bottle-shake', file: '07s1.mp3', start: 0.7, endCap: 3.2},
+  {slug: '07-bottle-shake', file: '07s2.mp3', start: 3.4, endCap: 5.8},
+  {slug: '07-bottle-shake', file: '07s3.mp3', start: 6.0, endCap: 9.55},
 ];
 
 const manifest = {};
+let overruns = 0;
 for (const line of LINES) {
   const src = path.join(process.cwd(), 'public', 'vo', line.file);
   const {durationInSeconds} = await parseMedia({
@@ -40,21 +47,18 @@ for (const line of LINES) {
     acknowledgeRemotionLicense: true,
   });
   const dur = durationInSeconds ?? 0;
-  let start = line.start;
-  if (start + dur > line.endCap) {
-    start = Math.max(line.minStart ?? 0, line.endCap - dur);
-  }
-  const overrun = start + dur > line.endCap;
+  const overrun = line.start + dur > line.endCap;
+  if (overrun) overruns++;
   (manifest[line.slug] ??= []).push({
     file: line.file,
-    startSec: Math.round(start * 100) / 100,
+    startSec: line.start,
     durationSec: Math.round(dur * 100) / 100,
   });
   console.log(
-    `${line.file}: ${dur.toFixed(2)}s @ ${start.toFixed(2)}s${overrun ? '  ⚠ OVERRUNS cap ' + line.endCap : ''}`,
+    `${line.file}: ${dur.toFixed(2)}s @ ${line.start.toFixed(2)}s${overrun ? `  ⚠ ends ${(line.start + dur).toFixed(2)} past cap ${line.endCap}` : ''}`,
   );
 }
 
 const out = path.join(process.cwd(), 'src', 'vo-manifest.json');
 writeFileSync(out, JSON.stringify(manifest, null, 2) + '\n');
-console.log(`Wrote ${out}`);
+console.log(`Wrote ${out}${overruns ? ` (${overruns} overruns)` : ''}`);

@@ -1,100 +1,100 @@
 [
   {
     "text": " Chili",
-    "startMs": 700,
-    "endMs": 1147,
-    "timestampMs": 923,
+    "startMs": 800,
+    "endMs": 1003,
+    "timestampMs": 902,
     "confidence": null
   },
   {
     "text": " crisp",
-    "startMs": 1147,
-    "endMs": 1594,
-    "timestampMs": 1370,
+    "startMs": 1003,
+    "endMs": 1206,
+    "timestampMs": 1105,
     "confidence": null
   },
   {
     "text": " in",
-    "startMs": 1594,
-    "endMs": 1834,
-    "timestampMs": 1714,
+    "startMs": 1206,
+    "endMs": 1326,
+    "timestampMs": 1266,
     "confidence": null
   },
   {
     "text": " the",
-    "startMs": 1834,
-    "endMs": 2144,
-    "timestampMs": 1989,
+    "startMs": 1326,
+    "endMs": 1467,
+    "timestampMs": 1397,
     "confidence": null
   },
   {
     "text": " pan",
-    "startMs": 2144,
-    "endMs": 2453,
-    "timestampMs": 2298,
+    "startMs": 1467,
+    "endMs": 1608,
+    "timestampMs": 1538,
     "confidence": null
   },
   {
     "text": " first",
-    "startMs": 2453,
-    "endMs": 2900,
-    "timestampMs": 2677,
+    "startMs": 1608,
+    "endMs": 1811,
+    "timestampMs": 1710,
     "confidence": null
   },
   {
     "text": " The",
-    "startMs": 3500,
-    "endMs": 3857,
-    "timestampMs": 3678,
+    "startMs": 3580,
+    "endMs": 3787,
+    "timestampMs": 3684,
     "confidence": null
   },
   {
     "text": " egg",
-    "startMs": 3857,
-    "endMs": 4213,
-    "timestampMs": 4035,
+    "startMs": 3787,
+    "endMs": 3994,
+    "timestampMs": 3891,
     "confidence": null
   },
   {
     "text": " fries",
-    "startMs": 4213,
-    "endMs": 4728,
-    "timestampMs": 4471,
+    "startMs": 3994,
+    "endMs": 4294,
+    "timestampMs": 4144,
     "confidence": null
   },
   {
     "text": " inside",
-    "startMs": 4728,
-    "endMs": 5323,
-    "timestampMs": 5025,
+    "startMs": 4294,
+    "endMs": 4639,
+    "timestampMs": 4467,
     "confidence": null
   },
   {
     "text": " it",
-    "startMs": 5323,
-    "endMs": 5600,
-    "timestampMs": 5461,
+    "startMs": 4639,
+    "endMs": 4800,
+    "timestampMs": 4720,
     "confidence": null
   },
   {
     "text": " Spicy",
-    "startMs": 6100,
-    "endMs": 6671,
-    "timestampMs": 6385,
+    "startMs": 6240,
+    "endMs": 6532,
+    "timestampMs": 6386,
     "confidence": null
   },
   {
     "text": " crispy",
-    "startMs": 6671,
-    "endMs": 7329,
-    "timestampMs": 7000,
+    "startMs": 6532,
+    "endMs": 6868,
+    "timestampMs": 6700,
     "confidence": null
   },
   {
     "text": " magic",
-    "startMs": 7329,
-    "endMs": 7900,
-    "timestampMs": 7615,
+    "startMs": 6868,
+    "endMs": 7160,
+    "timestampMs": 7014,
     "confidence": null
   }
 ]

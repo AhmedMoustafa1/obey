@@ -329,9 +329,9 @@ const SegmentCaptions: React.FC<{captions: Caption[]; highlightColor: string}> =
     () =>
       createTikTokStyleCaptions({
         captions,
-        // Each authored step (≤2.3s of continuous words) stays one page…
-        combineTokensWithinMilliseconds: 2600,
-        // …and any ≥450ms gap (between steps, before SPLAT!/Wow!) starts a new one.
+        // Wide combine window: pages break only on real pauses in the audio
+        // (≥450ms of silence between words), so text follows the voiceover.
+        combineTokensWithinMilliseconds: 5200,
         breakOnSilenceAfterMilliseconds: 450,
       }),
     [captions],
