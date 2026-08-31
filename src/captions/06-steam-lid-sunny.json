@@ -1,0 +1,93 @@
+[
+  {
+    "text": " No",
+    "startMs": 600,
+    "endMs": 904,
+    "timestampMs": 752,
+    "confidence": null
+  },
+  {
+    "text": " more",
+    "startMs": 904,
+    "endMs": 1383,
+    "timestampMs": 1143,
+    "confidence": null
+  },
+  {
+    "text": " broken",
+    "startMs": 1383,
+    "endMs": 2035,
+    "timestampMs": 1709,
+    "confidence": null
+  },
+  {
+    "text": " yolks",
+    "startMs": 2035,
+    "endMs": 2600,
+    "timestampMs": 2317,
+    "confidence": null
+  },
+  {
+    "text": " Splash",
+    "startMs": 3200,
+    "endMs": 3847,
+    "timestampMs": 3524,
+    "confidence": null
+  },
+  {
+    "text": " of",
+    "startMs": 3847,
+    "endMs": 4149,
+    "timestampMs": 3998,
+    "confidence": null
+  },
+  {
+    "text": " water,",
+    "startMs": 4149,
+    "endMs": 4710,
+    "timestampMs": 4429,
+    "confidence": null
+  },
+  {
+    "text": " lid",
+    "startMs": 4710,
+    "endMs": 5098,
+    "timestampMs": 4904,
+    "confidence": null
+  },
+  {
+    "text": " on",
+    "startMs": 5098,
+    "endMs": 5400,
+    "timestampMs": 5249,
+    "confidence": null
+  },
+  {
+    "text": " Steam",
+    "startMs": 5900,
+    "endMs": 6461,
+    "timestampMs": 6181,
+    "confidence": null
+  },
+  {
+    "text": " does",
+    "startMs": 6461,
+    "endMs": 6936,
+    "timestampMs": 6699,
+    "confidence": null
+  },
+  {
+    "text": " the",
+    "startMs": 6936,
+    "endMs": 7325,
+    "timestampMs": 7131,
+    "confidence": null
+  },
+  {
+    "text": " rest",
+    "startMs": 7325,
+    "endMs": 7800,
+    "timestampMs": 7563,
+    "confidence": null
+  }
+]

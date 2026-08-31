@@ -1,0 +1,107 @@
+[
+  {
+    "text": " A",
+    "startMs": 700,
+    "endMs": 858,
+    "timestampMs": 779,
+    "confidence": null
+  },
+  {
+    "text": " spoonful",
+    "startMs": 858,
+    "endMs": 1456,
+    "timestampMs": 1157,
+    "confidence": null
+  },
+  {
+    "text": " of",
+    "startMs": 1456,
+    "endMs": 1677,
+    "timestampMs": 1566,
+    "confidence": null
+  },
+  {
+    "text": " yogurt",
+    "startMs": 1677,
+    "endMs": 2149,
+    "timestampMs": 1913,
+    "confidence": null
+  },
+  {
+    "text": " in",
+    "startMs": 2149,
+    "endMs": 2370,
+    "timestampMs": 2260,
+    "confidence": null
+  },
+  {
+    "text": " the",
+    "startMs": 2370,
+    "endMs": 2653,
+    "timestampMs": 2512,
+    "confidence": null
+  },
+  {
+    "text": " eggs",
+    "startMs": 2653,
+    "endMs": 3000,
+    "timestampMs": 2827,
+    "confidence": null
+  },
+  {
+    "text": " Whisk",
+    "startMs": 3500,
+    "endMs": 4118,
+    "timestampMs": 3809,
+    "confidence": null
+  },
+  {
+    "text": " it",
+    "startMs": 4118,
+    "endMs": 4450,
+    "timestampMs": 4284,
+    "confidence": null
+  },
+  {
+    "text": " right",
+    "startMs": 4450,
+    "endMs": 5068,
+    "timestampMs": 4759,
+    "confidence": null
+  },
+  {
+    "text": " in",
+    "startMs": 5068,
+    "endMs": 5400,
+    "timestampMs": 5234,
+    "confidence": null
+  },
+  {
+    "text": " Low",
+    "startMs": 6000,
+    "endMs": 6356,
+    "timestampMs": 6178,
+    "confidence": null
+  },
+  {
+    "text": " heat,",
+    "startMs": 6356,
+    "endMs": 6792,
+    "timestampMs": 6574,
+    "confidence": null
+  },
+  {
+    "text": " big",
+    "startMs": 6792,
+    "endMs": 7148,
+    "timestampMs": 6970,
+    "confidence": null
+  },
+  {
+    "text": " patience",
+    "startMs": 7148,
+    "endMs": 7900,
+    "timestampMs": 7524,
+    "confidence": null
+  }
+]

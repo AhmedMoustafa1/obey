@@ -1,0 +1,93 @@
+[
+  {
+    "text": " When",
+    "startMs": 600,
+    "endMs": 1023,
+    "timestampMs": 812,
+    "confidence": null
+  },
+  {
+    "text": " peeling",
+    "startMs": 1023,
+    "endMs": 1677,
+    "timestampMs": 1350,
+    "confidence": null
+  },
+  {
+    "text": " goes",
+    "startMs": 1677,
+    "endMs": 2100,
+    "timestampMs": 1888,
+    "confidence": null
+  },
+  {
+    "text": " wrong…",
+    "startMs": 2100,
+    "endMs": 2600,
+    "timestampMs": 2350,
+    "confidence": null
+  },
+  {
+    "text": " Teta",
+    "startMs": 3200,
+    "endMs": 3648,
+    "timestampMs": 3424,
+    "confidence": null
+  },
+  {
+    "text": " steams",
+    "startMs": 3648,
+    "endMs": 4259,
+    "timestampMs": 3954,
+    "confidence": null
+  },
+  {
+    "text": " them",
+    "startMs": 4259,
+    "endMs": 4707,
+    "timestampMs": 4483,
+    "confidence": null
+  },
+  {
+    "text": " instead",
+    "startMs": 4707,
+    "endMs": 5400,
+    "timestampMs": 5054,
+    "confidence": null
+  },
+  {
+    "text": " The",
+    "startMs": 6200,
+    "endMs": 6547,
+    "timestampMs": 6374,
+    "confidence": null
+  },
+  {
+    "text": " shell",
+    "startMs": 6547,
+    "endMs": 7049,
+    "timestampMs": 6798,
+    "confidence": null
+  },
+  {
+    "text": " slips",
+    "startMs": 7049,
+    "endMs": 7551,
+    "timestampMs": 7300,
+    "confidence": null
+  },
+  {
+    "text": " right",
+    "startMs": 7551,
+    "endMs": 8053,
+    "timestampMs": 7802,
+    "confidence": null
+  },
+  {
+    "text": " off",
+    "startMs": 8053,
+    "endMs": 8400,
+    "timestampMs": 8226,
+    "confidence": null
+  }
+]

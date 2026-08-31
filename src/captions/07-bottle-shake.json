@@ -1,0 +1,79 @@
+[
+  {
+    "text": " Crack",
+    "startMs": 700,
+    "endMs": 1196,
+    "timestampMs": 948,
+    "confidence": null
+  },
+  {
+    "text": " them",
+    "startMs": 1196,
+    "endMs": 1616,
+    "timestampMs": 1406,
+    "confidence": null
+  },
+  {
+    "text": " into",
+    "startMs": 1616,
+    "endMs": 2036,
+    "timestampMs": 1826,
+    "confidence": null
+  },
+  {
+    "text": " a",
+    "startMs": 2036,
+    "endMs": 2227,
+    "timestampMs": 2132,
+    "confidence": null
+  },
+  {
+    "text": " bottle",
+    "startMs": 2227,
+    "endMs": 2800,
+    "timestampMs": 2514,
+    "confidence": null
+  },
+  {
+    "text": " Shake",
+    "startMs": 3400,
+    "endMs": 4100,
+    "timestampMs": 3750,
+    "confidence": null
+  },
+  {
+    "text": " shake",
+    "startMs": 4100,
+    "endMs": 4800,
+    "timestampMs": 4450,
+    "confidence": null
+  },
+  {
+    "text": " SHAKE",
+    "startMs": 4800,
+    "endMs": 5500,
+    "timestampMs": 5150,
+    "confidence": null
+  },
+  {
+    "text": " The",
+    "startMs": 6000,
+    "endMs": 6367,
+    "timestampMs": 6184,
+    "confidence": null
+  },
+  {
+    "text": " fluffiest",
+    "startMs": 6367,
+    "endMs": 7224,
+    "timestampMs": 6796,
+    "confidence": null
+  },
+  {
+    "text": " scramble",
+    "startMs": 7224,
+    "endMs": 8000,
+    "timestampMs": 7612,
+    "confidence": null
+  }
+]

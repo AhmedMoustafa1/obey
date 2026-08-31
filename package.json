@@ -34,10 +34,11 @@
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "remotion": "4.0.518",
-    "zod": "^3.25.76"
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@remotion/eslint-config-flat": "4.0.518",
+    "@remotion/install-whisper-cpp": "^4.0.518",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.5",
     "eslint": "^9.39.5",

@@ -1,0 +1,30 @@
+[
+  {
+    "text": " Seven",
+    "startMs": 260,
+    "endMs": 579,
+    "timestampMs": 420,
+    "confidence": null
+  },
+  {
+    "text": " egg",
+    "startMs": 579,
+    "endMs": 801,
+    "timestampMs": 690,
+    "confidence": null
+  },
+  {
+    "text": " hacks.",
+    "startMs": 801,
+    "endMs": 1120,
+    "timestampMs": 960,
+    "confidence": null
+  },
+  {
+    "text": " SPLAT!",
+    "startMs": 4600,
+    "endMs": 5600,
+    "timestampMs": 5100,
+    "confidence": null
+  }
+]

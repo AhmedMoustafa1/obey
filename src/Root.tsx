@@ -1,5 +1,11 @@
 import React from 'react';
 import {Composition} from 'remotion';
+import {
+  EggHacks,
+  eggHacksSchema,
+  EGG_HACKS_DURATION,
+  FPS as EGG_HACKS_FPS,
+} from './compositions/EggHacks';
 import {Intro, introSchema} from './compositions/Intro';
 import {SceneTransitions} from './compositions/SceneTransitions';
 import {TikTokCaptions, tikTokCaptionsSchema} from './compositions/TikTokCaptions';
@@ -8,6 +14,19 @@ import {LogoReveal, logoRevealSchema} from './compositions/LogoReveal';
 export const RemotionRoot: React.FC = () => {
   return (
     <>
+      <Composition
+        id="EggHacks"
+        component={EggHacks}
+        durationInFrames={EGG_HACKS_DURATION}
+        fps={EGG_HACKS_FPS}
+        width={1080}
+        height={1920}
+        schema={eggHacksSchema}
+        defaultProps={{
+          highlightColor: '#ffc043',
+          musicVolume: 0.3,
+        }}
+      />
       <Composition
         id="Intro"
         component={Intro}
