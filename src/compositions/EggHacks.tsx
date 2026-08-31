@@ -18,6 +18,7 @@ import {createTikTokStyleCaptions, type Caption} from '@remotion/captions';
 import {fitText} from '@remotion/layout-utils';
 import {fontFamily} from '../fonts';
 
+import voManifest from '../vo-manifest.json';
 import introCaptions from '../captions/00-intro.json';
 import strainerCaptions from '../captions/01-strainer-poached.json';
 import yogurtCaptions from '../captions/02-yogurt-scramble.json';
@@ -39,23 +40,43 @@ const cleanCaptions = (captions: Caption[]): Caption[] =>
     return true;
   });
 
+type VoLine = {file: string; startSec: number; durationSec: number};
+
+const VO: Record<string, VoLine[]> = voManifest;
+
 type Segment = {
   file: string;
+  slug: string;
   durationInFrames: number;
   captions: Caption[];
   number?: number;
   title?: string;
 };
 
+const seg = (
+  file: string,
+  seconds: number,
+  captions: Caption[],
+  number?: number,
+  title?: string,
+): Segment => ({
+  file,
+  slug: file.replace(/\.mp4$/, ''),
+  durationInFrames: seconds * FPS,
+  captions: cleanCaptions(captions),
+  number,
+  title,
+});
+
 const SEGMENTS: Segment[] = [
-  {file: '00-intro.mp4', durationInFrames: 6 * FPS, captions: cleanCaptions(introCaptions as Caption[])},
-  {file: '01-strainer-poached.mp4', durationInFrames: 10 * FPS, captions: cleanCaptions(strainerCaptions as Caption[]), number: 1, title: 'Strainer Poached Egg'},
-  {file: '02-yogurt-scramble.mp4', durationInFrames: 10 * FPS, captions: cleanCaptions(yogurtCaptions as Caption[]), number: 2, title: 'Creamy Yogurt Scramble'},
-  {file: '03-parmesan-crispy.mp4', durationInFrames: 10 * FPS, captions: cleanCaptions(parmesanCaptions as Caption[]), number: 3, title: 'Parmesan Crispy Egg'},
-  {file: '04-easy-peel.mp4', durationInFrames: 10 * FPS, captions: cleanCaptions(easyPeelCaptions as Caption[]), number: 4, title: 'Easy-Peel Eggs'},
-  {file: '05-chili-crisp.mp4', durationInFrames: 10 * FPS, captions: cleanCaptions(chiliCaptions as Caption[]), number: 5, title: 'Chili-Crisp Egg'},
-  {file: '06-steam-lid-sunny.mp4', durationInFrames: 10 * FPS, captions: cleanCaptions(steamLidCaptions as Caption[]), number: 6, title: 'Steam-Lid Sunny Egg'},
-  {file: '07-bottle-shake.mp4', durationInFrames: 10 * FPS, captions: cleanCaptions(bottleCaptions as Caption[]), number: 7, title: 'Bottle-Shake Scramble'},
+  seg('00-intro.mp4', 6, introCaptions as Caption[]),
+  seg('01-strainer-poached.mp4', 10, strainerCaptions as Caption[], 1, 'Strainer Poached Egg'),
+  seg('02-yogurt-scramble.mp4', 10, yogurtCaptions as Caption[], 2, 'Creamy Yogurt Scramble'),
+  seg('03-parmesan-crispy.mp4', 10, parmesanCaptions as Caption[], 3, 'Parmesan Crispy Egg'),
+  seg('04-easy-peel.mp4', 10, easyPeelCaptions as Caption[], 4, 'Easy-Peel Eggs'),
+  seg('05-chili-crisp.mp4', 10, chiliCaptions as Caption[], 5, 'Chili-Crisp Egg'),
+  seg('06-steam-lid-sunny.mp4', 10, steamLidCaptions as Caption[], 6, 'Steam-Lid Sunny Egg'),
+  seg('07-bottle-shake.mp4', 10, bottleCaptions as Caption[], 7, 'Bottle-Shake Scramble'),
 ];
 
 export const EGG_HACKS_DURATION = SEGMENTS.reduce(
@@ -69,14 +90,22 @@ const segmentStart = (index: number): number =>
   TRANSITION_FRAMES * index;
 
 // Frame spans (absolute) where someone is speaking — used to duck the music.
-const SPEECH_SPANS: Array<[number, number]> = SEGMENTS.flatMap((seg, i) => {
+// Covers on-screen caption beats and the voiceover lines.
+const SPEECH_SPANS: Array<[number, number]> = SEGMENTS.flatMap((s, i) => {
   const offset = segmentStart(i);
-  return seg.captions.map(
+  const captionSpans = s.captions.map(
     (c): [number, number] => [
       offset + (c.startMs / 1000) * FPS,
       offset + (c.endMs / 1000) * FPS,
     ],
   );
+  const voSpans = (VO[s.slug] ?? []).map(
+    (l): [number, number] => [
+      offset + l.startSec * FPS,
+      offset + (l.startSec + l.durationSec) * FPS,
+    ],
+  );
+  return [...captionSpans, ...voSpans];
 });
 
 const speechActivity = (frame: number): number => {
@@ -327,12 +356,41 @@ const SegmentVideo: React.FC<{segment: Segment; highlightColor: string}> = ({
   segment,
   highlightColor,
 }) => {
+  const voLines = VO[segment.slug] ?? [];
+  const voSpans = voLines.map(
+    (l): [number, number] => [l.startSec * FPS, (l.startSec + l.durationSec) * FPS],
+  );
+
+  // Soften the clip's own soundtrack while the voiceover talks over it.
+  const clipVolume = (f: number): number => {
+    const RAMP = 6;
+    let duck = 0;
+    for (const [start, end] of voSpans) {
+      const v = interpolate(f, [start - RAMP, start, end, end + RAMP], [0, 1, 1, 0], {
+        extrapolateLeft: 'clamp',
+        extrapolateRight: 'clamp',
+      });
+      if (v > duck) duck = v;
+    }
+    return 1 - 0.3 * duck;
+  };
+
   return (
     <AbsoluteFill style={{backgroundColor: '#0d0a07'}}>
       <OffthreadVideo
         src={staticFile(`clips/${segment.file}`)}
         style={{width: '100%', height: '100%', objectFit: 'cover'}}
+        volume={clipVolume}
       />
+      {voLines.map((line) => (
+        <Sequence
+          key={line.file}
+          from={Math.round(line.startSec * FPS)}
+          durationInFrames={Math.ceil(line.durationSec * FPS) + 2}
+        >
+          <Audio src={staticFile(`vo/${line.file}`)} />
+        </Sequence>
+      ))}
       {segment.number !== undefined && segment.title !== undefined ? (
         <TitleCard number={segment.number} title={segment.title} />
       ) : (
