@@ -15,8 +15,6 @@ import {z} from 'zod';
 import {zColor} from '@remotion/zod-types';
 import {noise2D} from '@remotion/noise';
 import {Star} from '@remotion/shapes';
-import {fitText} from '@remotion/layout-utils';
-import {fontFamily, arabicFontFamily} from '../fonts';
 import gradeData from '../mahshi-grade.json';
 
 export const FPS = 24;
@@ -24,7 +22,7 @@ export const FPS = 24;
 // Its stop-time intro rests at 1.3–2.0s and 5.3–6.0s and lands big bass hits
 // at 2.0s and 6.0s; the groove stops at 24.0s and rings out to 26.0s. The edit
 // is cut to that map: freeze-frame in the first rest, resume on the 2.0s hit,
-// cut to the cooking on the 6.0s hit, stamp the verdict as the music stops.
+// cut to the cooking on the 6.0s hit, smash-zoom the verdict as the music stops.
 export const MAHSHI_DURATION = 26 * FPS;
 
 export const mahshiSchema = z.object({
@@ -40,11 +38,7 @@ export const mahshiSchema = z.object({
 
 type Props = z.infer<typeof mahshiSchema>;
 
-const PALETTE = {
-  cream: '#fdf6e9',
-  charcoal: '#2b2016',
-  stampRed: '#d7263d',
-};
+const CHARCOAL = '#2b2016';
 
 // ---------------------------------------------------------------------------
 // Footage + color
@@ -251,7 +245,7 @@ const PIECES: Piece[] = [
     origin: [50, 24],
     punches: [15],
   },
-  // The verdict: dramatic zooms on the beats, stamp when the music stops.
+  // The verdict: dramatic zooms on the beats, smash-zoom when the music stops.
   {
     clip: VERDICT,
     from: 533,
@@ -262,6 +256,7 @@ const PIECES: Piece[] = [
       {at: 540 - 533, scale: 1.14},
       {at: 552 - 533, scale: 1.3},
       {at: 564 - 533, scale: 1.48},
+      {at: 576 - 533, scale: 1.8},
     ],
   },
 ];
@@ -398,300 +393,13 @@ const PieceView: React.FC<{
 // ---------------------------------------------------------------------------
 // Graphics
 
-// Thick outline drawn behind the fill (paint-order), plus a soft drop shadow.
-const outline = (
-  radius: number,
-  color: string,
-  shadow = `0 ${radius + 6}px ${radius * 3}px rgba(0,0,0,0.45)`,
-): React.CSSProperties => ({
-  WebkitTextStroke: `${radius * 2}px ${color}`,
-  paintOrder: 'stroke fill',
-  textShadow: shadow,
-});
-
-const fadeOut = (frame: number, start: number, length = 6) =>
-  interpolate(frame, [start, start + length], [1, 0], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  });
-
-// Words pop in one after another (kinetic typography).
-const KineticLine: React.FC<{
-  words: Array<{text: string; color?: string}>;
-  top: string;
-  fontSize: number;
-  delay?: number;
-  stagger?: number;
-  exitAt?: number;
-}> = ({words, top, fontSize, delay = 0, stagger = 2, exitAt}) => {
+// VHS-style fast-forward look for the time skip: scanlines, a slight dim and
+// a blinking play-forward glyph.
+const FastForward: React.FC = () => {
   const frame = useCurrentFrame();
-  const {fps} = useVideoConfig();
-  const out = exitAt === undefined ? 1 : fadeOut(frame, exitAt, 5);
-  return (
-    <AbsoluteFill style={{alignItems: 'center', pointerEvents: 'none'}}>
-      <div
-        style={{
-          position: 'absolute',
-          top,
-          width: '88%',
-          display: 'flex',
-          flexWrap: 'wrap',
-          justifyContent: 'center',
-          columnGap: fontSize * 0.34,
-          rowGap: fontSize * 0.05,
-          opacity: out,
-        }}
-      >
-        {words.map((w, i) => {
-          const s = spring({
-            frame: frame - delay - i * stagger,
-            fps,
-            config: {damping: 16, stiffness: 260},
-          });
-          return (
-            <span
-              key={i}
-              style={{
-                display: 'inline-block',
-                fontFamily,
-                fontWeight: 900,
-                fontSize,
-                lineHeight: 1.12,
-                color: w.color ?? 'white',
-                ...outline(5, PALETTE.charcoal),
-                opacity: Math.min(1, s * 2),
-                transform: `translateY(${interpolate(s, [0, 1], [26, 0])}px) scale(${interpolate(s, [0, 1], [0.6, 1])})`,
-              }}
-            >
-              {w.text}
-            </span>
-          );
-        })}
-      </div>
-    </AbsoluteFill>
-  );
-};
-
-// Each word slams in on its own frame, big.
-const SlamWords: React.FC<{
-  words: string[];
-  at: number[];
-  top: string;
-  color: string;
-  maxFontSize: number;
-  exitAt?: number;
-}> = ({words, at, top, color, maxFontSize, exitAt}) => {
-  const frame = useCurrentFrame();
-  const {fps, width} = useVideoConfig();
-  const {fontSize} = fitText({
-    text: words.join(' '),
-    withinWidth: width * 0.84,
-    fontFamily,
-    fontWeight: '900',
-  });
-  const size = Math.min(maxFontSize, fontSize);
-  const out = exitAt === undefined ? 1 : fadeOut(frame, exitAt, 5);
-  return (
-    <AbsoluteFill style={{alignItems: 'center', pointerEvents: 'none'}}>
-      <div
-        style={{
-          position: 'absolute',
-          top,
-          display: 'flex',
-          gap: size * 0.25,
-          opacity: out,
-          transform: `rotate(-3deg) scale(${interpolate(out, [0, 1], [0.85, 1])})`,
-        }}
-      >
-        {words.map((w, i) => {
-          const s = spring({frame: frame - at[i], fps, config: {damping: 13, stiffness: 400}});
-          return (
-            <span
-              key={i}
-              style={{
-                display: 'inline-block',
-                fontFamily,
-                fontWeight: 900,
-                fontSize: size,
-                lineHeight: 1,
-                color,
-                ...outline(7, PALETTE.charcoal),
-                opacity: frame >= at[i] ? 1 : 0,
-                transform: `scale(${interpolate(s, [0, 1], [1.9, 1])})`,
-              }}
-            >
-              {w}
-            </span>
-          );
-        })}
-      </div>
-    </AbsoluteFill>
-  );
-};
-
-const Pill: React.FC<{
-  children: React.ReactNode;
-  top: string;
-  background: string;
-  color: string;
-  fontSize: number;
-  at?: number;
-  exitAt?: number;
-}> = ({children, top, background, color, fontSize, at = 0, exitAt}) => {
-  const frame = useCurrentFrame();
-  const {fps} = useVideoConfig();
-  const s = spring({frame: frame - at, fps, config: {damping: 14, stiffness: 260}});
-  const out = exitAt === undefined ? 1 : fadeOut(frame, exitAt, 5);
-  return (
-    <AbsoluteFill style={{alignItems: 'center', pointerEvents: 'none'}}>
-      <div
-        style={{
-          position: 'absolute',
-          top,
-          fontFamily,
-          fontWeight: 800,
-          fontSize,
-          color,
-          backgroundColor: background,
-          borderRadius: 999,
-          padding: `${fontSize * 0.3}px ${fontSize * 0.8}px`,
-          boxShadow: '0 10px 30px rgba(0,0,0,0.4)',
-          whiteSpace: 'nowrap',
-          opacity: (frame >= at ? 1 : 0) * out,
-          transform: `scale(${interpolate(s, [0, 1], [0.4, 1])}) rotate(${interpolate(s, [0, 1], [-8, -2])}deg)`,
-        }}
-      >
-        {children}
-      </div>
-    </AbsoluteFill>
-  );
-};
-
-const Arabic: React.FC<{children: React.ReactNode}> = ({children}) => (
-  <span style={{fontFamily: arabicFontFamily, direction: 'rtl', unicodeBidi: 'isolate'}}>
-    {children}
-  </span>
-);
-
-const TitleCard: React.FC<{accent: string}> = ({accent}) => {
-  const frame = useCurrentFrame();
-  const {fps, width} = useVideoConfig();
-  const {fontSize} = fitText({text: 'MAHSHI', withinWidth: width * 0.84, fontFamily, fontWeight: '900'});
-  const slam = spring({frame, fps, config: {damping: 12, stiffness: 300}});
-  const out = fadeOut(frame, 48, 6);
-  return (
-    <>
-      <Pill top="34%" background={accent} color={PALETTE.charcoal} fontSize={46} exitAt={48}>
-        TETA&apos;S
-      </Pill>
-      <AbsoluteFill style={{alignItems: 'center', pointerEvents: 'none'}}>
-        <div
-          style={{
-            position: 'absolute',
-            top: '40%',
-            fontFamily,
-            fontWeight: 900,
-            fontSize: Math.min(230, fontSize),
-            lineHeight: 1,
-            color: PALETTE.cream,
-            ...outline(9, PALETTE.charcoal),
-            opacity: out,
-            transform: `scale(${interpolate(slam, [0, 1], [2.2, 1]) * interpolate(out, [0, 1], [0.8, 1])}) rotate(-3deg)`,
-          }}
-        >
-          MAHSHI
-        </div>
-      </AbsoluteFill>
-      <Pill
-        top="56%"
-        background={PALETTE.cream}
-        color={PALETTE.charcoal}
-        fontSize={40}
-        at={12}
-        exitAt={48}
-      >
-        stuffed eggplant · <Arabic>محشي بتنجان</Arabic>
-      </Pill>
-    </>
-  );
-};
-
-const STEPS = [
-  {at: 0, label: "Core 'em"},
-  {at: 18, label: 'Rice + tomato + herbs'},
-  {at: 66, label: "Stuff 'em. Pack 'em tight."},
-  {at: 140, label: 'Drown in tomato broth'},
-];
-
-const StepChip: React.FC<{accent: string; exitAt: number}> = ({accent, exitAt}) => {
-  const frame = useCurrentFrame();
-  const {fps} = useVideoConfig();
-  let index = 0;
-  STEPS.forEach((s, i) => {
-    if (frame >= s.at) index = i;
-  });
-  const step = STEPS[index];
-  const enter = spring({frame, fps, config: {damping: 200}, durationInFrames: 8});
-  const swap = spring({frame: frame - step.at, fps, config: {damping: 12, stiffness: 300}});
-  const out = fadeOut(frame, exitAt, 4);
-  return (
-    <AbsoluteFill style={{alignItems: 'center', pointerEvents: 'none'}}>
-      <div
-        style={{
-          position: 'absolute',
-          top: '6.5%',
-          display: 'flex',
-          alignItems: 'center',
-          gap: 16,
-          opacity: enter * out,
-          transform: `translateY(${interpolate(enter, [0, 1], [-60, 0])}px)`,
-        }}
-      >
-        <div
-          style={{
-            fontFamily,
-            fontWeight: 900,
-            fontSize: 34,
-            letterSpacing: 4,
-            color: PALETTE.charcoal,
-            backgroundColor: accent,
-            borderRadius: 999,
-            padding: '12px 26px',
-            boxShadow: '0 8px 24px rgba(0,0,0,0.35)',
-          }}
-        >
-          STEP {index + 1}
-        </div>
-        <div
-          style={{
-            fontFamily,
-            fontWeight: 800,
-            fontSize: 44,
-            color: PALETTE.charcoal,
-            backgroundColor: PALETTE.cream,
-            borderRadius: 22,
-            padding: '12px 30px',
-            boxShadow: '0 10px 30px rgba(0,0,0,0.4)',
-            whiteSpace: 'nowrap',
-            transform: `scale(${interpolate(swap, [0, 1], [0.7, 1])})`,
-          }}
-        >
-          {step.label}
-        </div>
-      </div>
-    </AbsoluteFill>
-  );
-};
-
-const FastForward: React.FC<{accent: string}> = ({accent}) => {
-  const frame = useCurrentFrame();
-  const {fps} = useVideoConfig();
-  const s = spring({frame, fps, config: {damping: 11, stiffness: 260}});
-  const jitter = noise2D('ff-jitter', frame / 1.5, 0) * 6;
   const blink = Math.floor(frame / 4) % 2 === 0 ? 1 : 0.35;
   return (
     <AbsoluteFill style={{pointerEvents: 'none'}}>
-      {/* VHS-style scanlines + slight dim to sell the time skip */}
       <AbsoluteFill
         style={{
           background:
@@ -704,28 +412,10 @@ const FastForward: React.FC<{accent: string}> = ({accent}) => {
       >
         {[0, 1].map((i) => (
           <svg key={i} width={46} height={52} viewBox="0 0 46 52">
-            <polygon points="0,0 46,26 0,52" fill="white" stroke={PALETTE.charcoal} strokeWidth={4} />
+            <polygon points="0,0 46,26 0,52" fill="white" stroke={CHARCOAL} strokeWidth={4} />
           </svg>
         ))}
       </div>
-      <AbsoluteFill style={{alignItems: 'center', justifyContent: 'center'}}>
-        <div
-          style={{
-            fontFamily,
-            fontWeight: 900,
-            fontSize: 128,
-            lineHeight: 0.95,
-            textAlign: 'center',
-            color: accent,
-            ...outline(8, '#4a1d6b', '10px 14px 0 #4a1d6b'),
-            transform: `translateX(${jitter}px) skewX(-10deg) scale(${interpolate(s, [0, 1], [0.3, 1])}) rotate(-4deg)`,
-          }}
-        >
-          1 HOUR
-          <br />
-          LATER
-        </div>
-      </AbsoluteFill>
     </AbsoluteFill>
   );
 };
@@ -766,110 +456,6 @@ const Sparkles: React.FC<{x: number; y: number; color: string}> = ({x, y, color}
   );
 };
 
-const VerdictDots: React.FC = () => {
-  const frame = useCurrentFrame();
-  const dots = frame >= 31 ? 3 : frame >= 19 ? 2 : frame >= 7 ? 1 : 0;
-  return (
-    <AbsoluteFill style={{alignItems: 'center', pointerEvents: 'none'}}>
-      <div
-        style={{
-          position: 'absolute',
-          top: '70%',
-          fontFamily,
-          fontWeight: 900,
-          fontSize: 76,
-          color: 'white',
-          ...outline(6, PALETTE.charcoal),
-        }}
-      >
-        the verdict{'.'.repeat(dots)}
-        <span style={{opacity: 0}}>{'.'.repeat(3 - dots)}</span>
-      </div>
-    </AbsoluteFill>
-  );
-};
-
-const ApprovedStamp: React.FC<{accent: string}> = ({accent}) => {
-  const frame = useCurrentFrame();
-  const {fps} = useVideoConfig();
-  const slam = spring({frame, fps, config: {damping: 14, stiffness: 520}});
-  const scale = interpolate(slam, [0, 1], [3.2, 1]);
-  const ink = interpolate(frame, [0, 3], [0, 1], {extrapolateRight: 'clamp'});
-  const tagIn = spring({frame: frame - 14, fps, config: {damping: 200}, durationInFrames: 10});
-  return (
-    <AbsoluteFill style={{alignItems: 'center', pointerEvents: 'none'}}>
-      {/* Darken behind the stamp so it reads on any frame */}
-      <AbsoluteFill
-        style={{
-          background:
-            'radial-gradient(ellipse at 50% 62%, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0) 60%)',
-          opacity: ink,
-        }}
-      />
-      <div
-        style={{
-          position: 'absolute',
-          top: '54%',
-          padding: '18px 40px 22px',
-          border: `12px solid ${PALETTE.stampRed}`,
-          outline: `4px solid ${PALETTE.stampRed}`,
-          outlineOffset: 8,
-          borderRadius: 26,
-          backgroundColor: 'rgba(253,246,233,0.88)',
-          textAlign: 'center',
-          opacity: ink,
-          transform: `rotate(-9deg) scale(${scale})`,
-          boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
-        }}
-      >
-        <div
-          style={{
-            fontFamily,
-            fontWeight: 900,
-            fontSize: 66,
-            letterSpacing: 10,
-            color: PALETTE.stampRed,
-            lineHeight: 1,
-          }}
-        >
-          TETA
-        </div>
-        <div
-          style={{
-            fontFamily,
-            fontWeight: 900,
-            fontSize: 118,
-            letterSpacing: 2,
-            color: PALETTE.stampRed,
-            lineHeight: 1,
-          }}
-        >
-          APPROVED
-        </div>
-      </div>
-      <div
-        style={{
-          position: 'absolute',
-          top: '79%',
-          fontFamily,
-          fontWeight: 800,
-          fontSize: 40,
-          color: PALETTE.charcoal,
-          backgroundColor: accent,
-          borderRadius: 999,
-          padding: '12px 34px',
-          boxShadow: '0 10px 30px rgba(0,0,0,0.4)',
-          opacity: tagIn,
-          transform: `translateY(${interpolate(tagIn, [0, 1], [30, 0])}px)`,
-          whiteSpace: 'nowrap',
-        }}
-      >
-        Teta&apos;s Mahshi · <Arabic>محشي بتنجان</Arabic>
-      </div>
-    </AbsoluteFill>
-  );
-};
-
 const Flash: React.FC<{strength: number; length: number}> = ({strength, length}) => {
   const frame = useCurrentFrame();
   const opacity = interpolate(frame, [0, length], [strength, 0], {
@@ -903,6 +489,7 @@ const SFX: Array<{at: number; file: string; volume: number; trimBefore?: number}
   {at: 324, file: 'whoosh.mp3', volume: 0.5},
   {at: 382, file: 'fast-forward.mp3', volume: 0.9, trimBefore: 10},
   {at: 433, file: 'sparkle.mp3', volume: 0.45},
+  // Deep thud under the final smash-zoom.
   {at: 576, file: 'stamp.mp3', volume: 2.2},
 ];
 
@@ -926,102 +513,11 @@ export const Mahshi: React.FC<Props> = (props) => {
         ))}
         <Vignette />
 
-        {/* Cold open */}
-        <Sequence durationInFrames={36}>
-          <KineticLine
-            top="6%"
-            fontSize={68}
-            delay={3}
-            words={[
-              {text: 'POV:'},
-              {text: 'you'},
-              {text: 'bring'},
-              {text: 'Teta'},
-              {text: 'the'},
-              {text: 'BIGGEST', color: accentColor},
-              {text: 'eggplant'},
-            ]}
-          />
-        </Sequence>
-        <Sequence from={36} durationInFrames={72}>
-          <SlamWords
-            words={['NOT.', 'THAT.', 'ONE.']}
-            at={[0, 4, 8]}
-            top="8%"
-            color={accentColor}
-            maxFontSize={140}
-            exitAt={64}
-          />
-          <Pill
-            top="19%"
-            background={PALETTE.cream}
-            color={PALETTE.charcoal}
-            fontSize={38}
-            at={22}
-            exitAt={64}
-          >
-            too big = too seedy for mahshi
-          </Pill>
-        </Sequence>
-        <Sequence from={110} durationInFrames={34}>
-          <Pill top="6%" background={accentColor} color={PALETTE.charcoal} fontSize={36}>
-            TETA&apos;S RULE
-          </Pill>
-          <SlamWords
-            words={['SMALL', 'ONES', 'ONLY.']}
-            at={[10, 13, 16]}
-            top="12%"
-            color="white"
-            maxFontSize={120}
-          />
-        </Sequence>
-
-        {/* Cooking */}
-        <Sequence from={144} durationInFrames={56}>
-          <TitleCard accent={accentColor} />
-        </Sequence>
-        <Sequence from={198} durationInFrames={186}>
-          <StepChip accent={accentColor} exitAt={182} />
-        </Sequence>
-        <Sequence from={292} durationInFrames={40}>
-          <KineticLine
-            top="66%"
-            fontSize={58}
-            exitAt={34}
-            words={[
-              {text: "she's"},
-              {text: 'allowed'},
-              {text: 'to'},
-              {text: 'help.'},
-              {text: '(barely)', color: accentColor},
-            ]}
-          />
-        </Sequence>
         <Sequence from={384} durationInFrames={24}>
-          <FastForward accent={accentColor} />
+          <FastForward />
         </Sequence>
-
-        {/* Reveal + verdict */}
         <Sequence from={433} durationInFrames={30}>
           <Sparkles x={22} y={20} color={accentColor} />
-          <KineticLine
-            top="47%"
-            fontSize={74}
-            stagger={3}
-            exitAt={25}
-            words={[
-              {text: 'wait…'},
-              {text: 'is'},
-              {text: 'Teta'},
-              {text: 'SMILING?!', color: accentColor},
-            ]}
-          />
-        </Sequence>
-        <Sequence from={533} durationInFrames={43}>
-          <VerdictDots />
-        </Sequence>
-        <Sequence from={576}>
-          <ApprovedStamp accent={accentColor} />
         </Sequence>
 
         <Sequence from={36} durationInFrames={5}>
