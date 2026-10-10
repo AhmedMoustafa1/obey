@@ -6,6 +6,12 @@ import {
   EGG_HACKS_DURATION,
   FPS as EGG_HACKS_FPS,
 } from './compositions/EggHacks';
+import {
+  Mahshi,
+  mahshiSchema,
+  MAHSHI_DURATION,
+  FPS as MAHSHI_FPS,
+} from './compositions/Mahshi';
 import {Intro, introSchema} from './compositions/Intro';
 import {SceneTransitions} from './compositions/SceneTransitions';
 import {TikTokCaptions, tikTokCaptionsSchema} from './compositions/TikTokCaptions';
@@ -40,6 +46,25 @@ export const RemotionRoot: React.FC = () => {
           locale: 'ar' as const,
           highlightColor: '#ffc043',
           musicVolume: 0.3,
+        }}
+      />
+      <Composition
+        id="Mahshi"
+        component={Mahshi}
+        durationInFrames={MAHSHI_DURATION}
+        fps={MAHSHI_FPS}
+        width={1080}
+        height={1920}
+        schema={mahshiSchema}
+        defaultProps={{
+          colorGrade: true,
+          matchStrength: 0.85,
+          warmth: -0.04,
+          contrast: 0.22,
+          saturation: 1,
+          musicVolume: 0.65,
+          foleyVolume: 1,
+          accentColor: '#ffc043',
         }}
       />
       <Composition

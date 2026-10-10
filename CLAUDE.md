@@ -13,9 +13,9 @@ Programmatic video editing: React components in `src/compositions/` are rendered
 
 - `src/index.ts` — entry, registers the root
 - `src/Root.tsx` — all `<Composition>` registrations (id, dimensions, fps, duration, zod schema, defaultProps)
-- `src/compositions/` — one file per composition (`EggHacks` is the main edit: clips + titles + captions + ducked music)
+- `src/compositions/` — one file per composition (`EggHacks` is the main edit: clips + titles + captions + ducked music; `Mahshi` is a beat-cut short with speed ramps, freeze-frames, SFX and a per-shot color grade from `src/mahshi-grade.json` — regenerate with `scripts/measure-shot-color.mjs`)
 - `src/captions/` — generated `Caption[]` JSON per clip; rebuild with `scripts/build-captions.mjs` (see README)
-- `public/` — static assets, referenced via `staticFile('name.ext')` (`clips/` footage, `music.mp3` bed, `fonts/`)
+- `public/` — static assets, referenced via `staticFile('name.ext')` (`clips/` footage, `music.mp3` / `music-mahshi.mp3` beds, `sfx/`, `fonts/`)
 - `remotion.config.ts` — CLI/render config
 
 In this sandbox, render with `--browser-executable=/opt/pw-browsers/chromium_headless_shell-1194/chrome-linux/headless_shell` (Chrome download is blocked); on a normal machine omit the flag.

@@ -23,6 +23,7 @@ npx remotion still Intro out/thumbnail.png --frame=60
 | --- | --- |
 | `EggHacks` | **Seven Egg Hacks** — full edit of 8 clips (`public/clips/`): intro + 7 recipe segments, crossfades, animated recipe title cards, word-pop captions spoken by the Mom voiceover (`public/vo/`), and an instrumental music bed that ducks under speech (1080×1920 @ 24fps) |
 | `EggHacksAR` | **Arabic edition** of the same edit — Egyptian Arabic (Masri) voiceover, RTL word-pop captions, Arabic title cards/badges/intro (Cairo font), all driven by the `locale` prop on the same component |
+| `Mahshi` | **Teta's Mahshi** — 3 stuffed-eggplant clips (`public/clips/mahshi/`) cut into one 26s short to a 120 BPM Egyptian shaabi bed (`public/music-mahshi.mp3`): record-scratch freeze-frame, speed ramp, whip pan, "1 HOUR LATER" fast-forward, beat-synced zooms, TETA APPROVED stamp, SFX (`public/sfx/`), per-shot color match + filmic grade (1080×1920 @ 24fps) |
 | `Intro` | Springs, self-hosted fonts, shapes, animated transforms, zod-editable props |
 | `SceneTransitions` | `@remotion/transitions` — fade, slide, wipe between scenes |
 | `TikTokCaptions` | Word-by-word animated captions (vertical 1080×1920) |
@@ -44,6 +45,14 @@ The Mom narration **speaks the on-screen captions verbatim** — 21 lines (7 hac
 The composition plays each line, softens the clip's own audio 30% under it, and ducks the music. To change a line: update its text in both scripts, regenerate the mp3 into `public/vo/`, re-run both scripts, re-render.
 
 Both scripts take a locale argument (`en` default, `ar`): the Arabic edition uses `ar`-prefixed mp3s (voice "Farida", Egyptian Arabic), `src/vo-manifest-ar.json`, and `src/captions-ar/`. The manifest builder auto-resolves collisions when a long line would talk over the next.
+
+### Mahshi edit
+
+Render: `npx remotion render Mahshi out/tetas-mahshi.mp4`
+
+- **Cut** — `PIECES` in `src/compositions/Mahshi.tsx` is the edit decision list: each piece maps output frames to a clip's source frames as `play` (constant speed), `ramp` (eases 1× → fast → 1×) or `hold` (freeze-frame). Cuts sit on the music's beat grid (120 BPM = 12 frames): freeze in the intro's first rest, cut to the cooking on the 6.0s bass hit, stamp when the groove stops at 24.0s.
+- **Color** — `node scripts/measure-shot-color.mjs` detects each clip's internal shot cuts and writes every shot's midtone average to `src/mahshi-grade.json`. The composition derives per-shot RGB gains from it (matching each shot's white balance and exposure to the edit-wide reference), then applies a gentle S-curve with cool-shadow/warm-highlight split-toning — all as an SVG color-matrix filter on the footage. `colorGrade`, `matchStrength`, `warmth`, `contrast` and `saturation` are Studio props, so you can A/B it live.
+- **Sound** — music bed and SFX are ElevenLabs generations (`eleven_music_v2_5`, verified instrumental via Scribe; `eleven_text_to_sound_v2`). Each clip's own Foley is loudness-matched under the music (`FOLEY_GAIN`).
 
 ## Installed Remotion packages
 
