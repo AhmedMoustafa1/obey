@@ -15,6 +15,7 @@ Programmatic video editing: React components in `src/compositions/` are rendered
 - `src/Root.tsx` — all `<Composition>` registrations (id, dimensions, fps, duration, zod schema, defaultProps)
 - `src/compositions/` — one file per composition (`EggHacks` is the main edit: clips + titles + captions + ducked music)
 - `src/captions/` — generated `Caption[]` JSON per clip; rebuild with `scripts/build-captions.mjs` (see README)
+- `BetaBabyKunafa` — beat-locked edit of `public/kunafa/` (source footage, `music.mp3`, `sfx/`); effects live in `src/compositions/kunafaFx.tsx`, audio prep in `scripts/*-kunafa-*.sh` (see README)
 - `public/` — static assets, referenced via `staticFile('name.ext')` (`clips/` footage, `music.mp3` bed, `fonts/`)
 - `remotion.config.ts` — CLI/render config
 

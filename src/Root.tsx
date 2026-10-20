@@ -6,6 +6,12 @@ import {
   EGG_HACKS_DURATION,
   FPS as EGG_HACKS_FPS,
 } from './compositions/EggHacks';
+import {
+  BetaBabyKunafa,
+  betaBabyKunafaSchema,
+  BETA_BABY_KUNAFA_DURATION,
+  FPS as BETA_BABY_KUNAFA_FPS,
+} from './compositions/BetaBabyKunafa';
 import {Intro, introSchema} from './compositions/Intro';
 import {SceneTransitions} from './compositions/SceneTransitions';
 import {TikTokCaptions, tikTokCaptionsSchema} from './compositions/TikTokCaptions';
@@ -40,6 +46,21 @@ export const RemotionRoot: React.FC = () => {
           locale: 'ar' as const,
           highlightColor: '#ffc043',
           musicVolume: 0.3,
+        }}
+      />
+      <Composition
+        id="BetaBabyKunafa"
+        component={BetaBabyKunafa}
+        durationInFrames={BETA_BABY_KUNAFA_DURATION}
+        fps={BETA_BABY_KUNAFA_FPS}
+        width={1080}
+        height={1920}
+        schema={betaBabyKunafaSchema}
+        defaultProps={{
+          musicVolume: 0.6,
+          sfxVolume: 1,
+          glowColor: '#ffc46b',
+          sparkleColor: '#fff2c9',
         }}
       />
       <Composition

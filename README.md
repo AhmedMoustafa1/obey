@@ -23,12 +23,26 @@ npx remotion still Intro out/thumbnail.png --frame=60
 | --- | --- |
 | `EggHacks` | **Seven Egg Hacks** — full edit of 8 clips (`public/clips/`): intro + 7 recipe segments, crossfades, animated recipe title cards, word-pop captions spoken by the Mom voiceover (`public/vo/`), and an instrumental music bed that ducks under speech (1080×1920 @ 24fps) |
 | `EggHacksAR` | **Arabic edition** of the same edit — Egyptian Arabic (Masri) voiceover, RTL word-pop captions, Arabic title cards/badges/intro (Cairo font), all driven by the `locale` prop on the same component |
+| `BetaBabyKunafa` | **The Beta Baby — kunafa nests + Alma** — a single 1080×1920 source (`public/kunafa/source.mp4`) re-cut to a 96 BPM music bed: every cut lands on a beat (15 frames), zoom / whip / flash / golden-light effect cuts, no text over the food, then a bloom into the Alma reveal with floating sparkles. 31s (744 frames @ 24fps) |
 | `Intro` | Springs, self-hosted fonts, shapes, animated transforms, zod-editable props |
 | `SceneTransitions` | `@remotion/transitions` — fade, slide, wipe between scenes |
 | `TikTokCaptions` | Word-by-word animated captions (vertical 1080×1920) |
 | `LogoReveal` | SVG path draw-on, motion-blur trails, noise-driven wobble |
 
 Render the main edit: `npx remotion render EggHacks out/seven-egg-hacks.mp4`
+
+### Kunafa edit pipeline (`BetaBabyKunafa`)
+
+```bash
+npx remotion render BetaBabyKunafa out/beta-baby-kunafa.mp4 --crf=16 --audio-bitrate=256k
+scripts/master-kunafa.sh out/beta-baby-kunafa.mp4   # -> out/beta-baby-kunafa-master.mp4 (-14 LUFS, -1.5 dBTP)
+```
+
+- **Footage** — `public/kunafa/source.mp4` is the original upload transcoded to H.264 (no audio; the source's own soundtrack changed character shot to shot, so it is replaced entirely). The shot table (source in-points, length in beats, speed, camera move, cut effect) is `SHOTS` in `src/compositions/BetaBabyKunafa.tsx`.
+- **Effect cuts** — `src/compositions/kunafaFx.tsx`. Each cut ramps the outgoing shot into an effect (zoom blur, vertical/horizontal whip, flash, golden light) and the incoming shot out of it, so the swap is hidden at peak intensity and no footage is spent on overlaps.
+- **Music** — ElevenLabs Music v2.5 instrumental (exactly 96 BPM, 12-bar groove ending on a soft chord). `scripts/prep-kunafa-audio.sh <variation.mp3>` starts it on the first beat and splices out 2 bars so the final chord lands on frame 600, where the Alma reveal begins.
+- **Foley** — ElevenLabs sound effects (whoosh ×2, pistachio drop, oven ding, syrup pour, pastry crunch, sparkle chime), leveled by `scripts/prep-kunafa-sfx.sh <raw-dir>` and placed by the `CUES` table; the music ducks under the hero ones (`DUCKS`).
+- **Retiming** — if you swap the music for a different BPM, change `BEAT` (frames per beat) and re-check `srcIn` / `beats` per shot: each shot can only run as long as its source footage allows (source cuts at frames 54, 166, 299, 350, 410, 481, 531, 590, 647, 717).
 
 ### Caption pipeline
 
