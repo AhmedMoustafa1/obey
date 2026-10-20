@@ -27,12 +27,13 @@ import {
 // The Beta Baby — kunafa nests + the Alma reveal.
 //
 // A single 1080×1920 source (public/kunafa/source.mp4, 10 stitched AI shots + the Alma card) is
-// re-cut to a 96 BPM music bed: 1 beat = 15 frames @ 24fps, so every cut lands on a beat.
+// re-cut to a music bed so every cut lands on a beat. Each music option has its own plan (beat
+// length + shot lengths in beats) because tempo decides how long a shot can run:
+//   original — 96 BPM, 15 frames/beat   A / B / C — 120 BPM, 12 frames/beat
 // There is deliberately no text over the food — the only words on screen are the ones already
 // baked into the Alma card.
 
 export const FPS = 24;
-const BEAT = 15;
 
 const PALETTE = {
   bg: '#1c0f06',
@@ -58,8 +59,8 @@ type Shot = {
 
 // Source shot ranges (frames @ 24fps): 0–53 · 54–165 · 166–298 · 299–349 · 350–409 · 410–480 ·
 // 481–530 · 531–589 · 590–646 · 647–716 · Alma 717–812. Each srcIn leaves a 2-frame margin from
-// the original hard cuts.
-const SHOTS: Shot[] = [
+// the original hard cuts, and every shot is limited by how much footage the source has.
+const SHOTS_96: Shot[] = [
   {id: 'pile', srcIn: 6, beats: 3, camera: [1.1, 1.0], cutIn: {kind: 'intro', half: 10}},
   {id: 'nest', srcIn: 56, beats: 7, camera: [1.0, 1.06, -10, 0], cutIn: {kind: 'zoom', half: 5}},
   {
@@ -86,57 +87,121 @@ const SHOTS: Shot[] = [
   {id: 'taste', srcIn: 649, beats: 4, camera: [1.05, 1.0], cutIn: {kind: 'whipLeft', half: 5}},
 ];
 
-// The last food shot dissolves into a bloom of white light that the Alma card emerges from.
+// 120 BPM = 12 frames per beat: 48 beats of food (24s) so the music's final hit (beat 48) lands on
+// frame 576, where the Alma reveal begins. The crack is placed so the pastry splits on beat 42.
+const SHOTS_120: Shot[] = [
+  {id: 'pile', srcIn: 4, beats: 4, camera: [1.1, 1.0], cutIn: {kind: 'intro', half: 10}},
+  {id: 'nest', srcIn: 56, beats: 9, camera: [1.0, 1.06, -10, 0], cutIn: {kind: 'zoom', half: 5}},
+  {
+    id: 'shape',
+    srcIn: 168,
+    beats: 8,
+    speed: 1.15,
+    camera: [1.07, 1.0, 8, 0],
+    cutIn: {kind: 'whipUp', half: 5},
+  },
+  {id: 'tray', srcIn: 304, beats: 3, camera: [1.0, 1.05], cutIn: {kind: 'golden', half: 6}},
+  {id: 'pistachio', srcIn: 352, beats: 4, camera: [1.0, 1.06, 0, -8], cutIn: {kind: 'zoom', half: 5}},
+  {id: 'filled', srcIn: 414, beats: 4, camera: [1.06, 1.0], cutIn: {kind: 'whipLeft', half: 5}},
+  {id: 'oven', srcIn: 486, beats: 3, camera: [1.0, 1.06], cutIn: {kind: 'flash', half: 4}},
+  {id: 'syrup', srcIn: 536, beats: 4, camera: [1.06, 1.0], cutIn: {kind: 'golden', half: 6}},
+  {
+    id: 'crack',
+    srcIn: 595,
+    beats: 4,
+    camera: [1.0, 1.08],
+    cutIn: {kind: 'zoom', half: 5},
+    impact: 12,
+  },
+  {id: 'taste', srcIn: 649, beats: 5, camera: [1.05, 1.0], cutIn: {kind: 'whipLeft', half: 5}},
+];
+
+// The last food shot blooms into white light that the Alma card emerges from.
 const ALMA_CUT: Cut = {kind: 'flash', half: 9, color: PALETTE.bloom};
 const ALMA_SRC_IN = 719;
 const ALMA_LIVE_FRAMES = 93; // source frames 719–811, then hold the final smile
-const ALMA_DURATION = 144; // 6s — the music's final chord rings out underneath
 
-const timeline = SHOTS.reduce<Array<Shot & {from: number; duration: number}>>((acc, shot) => {
-  const prev = acc[acc.length - 1];
-  const from = prev ? prev.from + prev.duration : 0;
-  return [...acc, {...shot, from, duration: shot.beats * BEAT}];
-}, []);
+export type TrackId = 'original' | 'A' | 'B' | 'C';
 
-const ALMA_FROM = timeline[timeline.length - 1].from + timeline[timeline.length - 1].duration;
-export const BETA_BABY_KUNAFA_DURATION = ALMA_FROM + ALMA_DURATION;
+type Plan = {
+  /** Frames per beat. */
+  beat: number;
+  shots: Shot[];
+  /** Length of the Alma reveal: long enough for the music's final chord to ring out. */
+  almaFrames: number;
+  music: string;
+};
 
-// Foley cues (ElevenLabs SFX). `from` is the frame the file starts; the offsets below put each
-// sound's transient on its cut / action. Levels are relative; sfxVolume scales them all.
+// Music beds are prepared by scripts/prep-kunafa-audio.sh and all sit at the same loudness.
+const PLANS: Record<TrackId, Plan> = {
+  original: {beat: 15, shots: SHOTS_96, almaFrames: 144, music: 'kunafa/music.mp3'},
+  A: {beat: 12, shots: SHOTS_120, almaFrames: 120, music: 'kunafa/music-a.mp3'},
+  B: {beat: 12, shots: SHOTS_120, almaFrames: 168, music: 'kunafa/music-b.mp3'},
+  C: {beat: 12, shots: SHOTS_120, almaFrames: 120, music: 'kunafa/music-c.mp3'},
+};
+
+// Foley cues (ElevenLabs SFX). `from` is the frame the file starts; the offsets put each sound's
+// transient on its cut / action. Levels are relative; sfxVolume scales them all.
 type Cue = {file: string; from: number; frames: number; volume: number};
-const cutFrame = (i: number): number => timeline[i].from;
-const CRACK_SHOT = timeline.findIndex((s) => s.id === 'crack');
-const CRACK_FRAME = cutFrame(CRACK_SHOT) + (SHOTS[CRACK_SHOT].impact ?? 0);
-const CUES: Cue[] = [
-  {file: 'whoosh', from: cutFrame(1) - 5, frames: 22, volume: 0.55},
-  {file: 'whoosh2', from: cutFrame(2) - 5, frames: 22, volume: 0.5},
-  {file: 'whoosh2', from: cutFrame(3) - 5, frames: 22, volume: 0.4},
-  {file: 'whoosh', from: cutFrame(4) - 5, frames: 22, volume: 0.55},
-  {file: 'pistachio', from: cutFrame(4) + 6, frames: 32, volume: 0.7},
-  {file: 'pistachio', from: cutFrame(4) + 31, frames: 32, volume: 0.65},
-  {file: 'whoosh2', from: cutFrame(5) - 5, frames: 22, volume: 0.5},
-  {file: 'whoosh', from: cutFrame(6) - 4, frames: 22, volume: 0.55},
-  {file: 'oven', from: cutFrame(6) - 2, frames: 44, volume: 0.6},
-  {file: 'whoosh2', from: cutFrame(7) - 5, frames: 22, volume: 0.4},
-  {file: 'syrup', from: cutFrame(7) + 2, frames: 50, volume: 0.7},
-  {file: 'whoosh', from: cutFrame(8) - 5, frames: 22, volume: 0.55},
-  {file: 'crunch', from: CRACK_FRAME - 4, frames: 36, volume: 0.9},
-  {file: 'whoosh2', from: cutFrame(9) - 5, frames: 22, volume: 0.5},
-  {file: 'sparkle', from: ALMA_FROM - 4, frames: 76, volume: 0.6},
-];
 
-// The music dips under the hero foley (like a sidechain) so the oven ding, pistachio ticks and the
-// pastry crunch cut through the groove. [first frame, last frame, music level while ducked]
-const DUCKS: Array<[number, number, number]> = [
-  [cutFrame(4) + 4, cutFrame(4) + 17, 0.8],
-  [cutFrame(4) + 29, cutFrame(4) + 42, 0.8],
-  [cutFrame(6) - 2, cutFrame(6) + 8, 0.7],
-  [cutFrame(7) + 2, cutFrame(7) + 28, 0.82],
-  [CRACK_FRAME - 3, CRACK_FRAME + 14, 0.5],
-];
+const build = (track: TrackId) => {
+  const plan = PLANS[track];
+  const timeline = plan.shots.reduce<Array<Shot & {from: number; duration: number}>>(
+    (acc, shot) => {
+      const prev = acc[acc.length - 1];
+      const from = prev ? prev.from + prev.duration : 0;
+      return [...acc, {...shot, from, duration: shot.beats * plan.beat}];
+    },
+    [],
+  );
+  const last = timeline[timeline.length - 1];
+  const almaFrom = last.from + last.duration;
+  const cutFrame = (i: number): number => timeline[i].from;
+  const crackShot = timeline.findIndex((sh) => sh.id === 'crack');
+  const crackFrame = cutFrame(crackShot) + (timeline[crackShot].impact ?? 0);
 
-const duckLevel = (f: number): number =>
-  DUCKS.reduce(
+  const cues: Cue[] = [
+    {file: 'whoosh', from: cutFrame(1) - 5, frames: 22, volume: 0.55},
+    {file: 'whoosh2', from: cutFrame(2) - 5, frames: 22, volume: 0.5},
+    {file: 'whoosh2', from: cutFrame(3) - 5, frames: 22, volume: 0.4},
+    {file: 'whoosh', from: cutFrame(4) - 5, frames: 22, volume: 0.55},
+    {file: 'pistachio', from: cutFrame(4) + 6, frames: 32, volume: 0.7},
+    {file: 'pistachio', from: cutFrame(4) + 31, frames: 32, volume: 0.65},
+    {file: 'whoosh2', from: cutFrame(5) - 5, frames: 22, volume: 0.5},
+    {file: 'whoosh', from: cutFrame(6) - 4, frames: 22, volume: 0.55},
+    {file: 'oven', from: cutFrame(6) - 2, frames: 44, volume: 0.6},
+    {file: 'whoosh2', from: cutFrame(7) - 5, frames: 22, volume: 0.4},
+    {file: 'syrup', from: cutFrame(7) + 2, frames: 50, volume: 0.7},
+    {file: 'whoosh', from: cutFrame(8) - 5, frames: 22, volume: 0.55},
+    {file: 'crunch', from: crackFrame - 4, frames: 36, volume: 0.9},
+    {file: 'whoosh2', from: cutFrame(9) - 5, frames: 22, volume: 0.5},
+    {file: 'sparkle', from: almaFrom - 4, frames: 76, volume: 0.6},
+  ];
+
+  // The music dips under the hero foley (like a sidechain) so the oven ding, pistachio ticks and the
+  // pastry crunch cut through the groove. [first frame, last frame, music level while ducked]
+  const ducks: Array<[number, number, number]> = [
+    [cutFrame(4) + 4, cutFrame(4) + 17, 0.8],
+    [cutFrame(4) + 29, cutFrame(4) + 42, 0.8],
+    [cutFrame(6) - 2, cutFrame(6) + 8, 0.7],
+    [cutFrame(7) + 2, cutFrame(7) + 28, 0.82],
+    [crackFrame - 3, crackFrame + 14, 0.5],
+  ];
+
+  return {plan, timeline, almaFrom, duration: almaFrom + plan.almaFrames, cues, ducks};
+};
+
+const BUILT: Record<TrackId, ReturnType<typeof build>> = {
+  original: build('original'),
+  A: build('A'),
+  B: build('B'),
+  C: build('C'),
+};
+
+export const trackDuration = (track: TrackId): number => BUILT[track].duration;
+
+const duckLevel = (ducks: Array<[number, number, number]>, f: number): number =>
+  ducks.reduce(
     (level, [from, to, depth]) =>
       Math.min(
         level,
@@ -149,6 +214,7 @@ const duckLevel = (f: number): number =>
   );
 
 export const betaBabyKunafaSchema = z.object({
+  track: z.enum(['original', 'A', 'B', 'C']),
   musicVolume: z.number().min(0).max(1),
   sfxVolume: z.number().min(0).max(1),
   glowColor: zColor(),
@@ -220,14 +286,17 @@ const FootageShot: React.FC<{
   );
 };
 
-const AlmaEnding: React.FC<{sparkleColor: string}> = ({sparkleColor}) => {
+const AlmaEnding: React.FC<{sparkleColor: string; duration: number}> = ({
+  sparkleColor,
+  duration,
+}) => {
   const frame = useCurrentFrame();
   const {fps, width, height} = useVideoConfig();
 
   // The card settles in from a soft zoom while the white bloom from the last food shot clears…
   const settle = spring({frame, fps, config: {damping: 200}, durationInFrames: 32});
   // …then it pushes in very slowly. Origin sits on the baby's face so the title stays inside the frame.
-  const push = interpolate(frame, [0, ALMA_DURATION], [1.0, 1.035], {
+  const push = interpolate(frame, [0, duration], [1.0, 1.035], {
     easing: Easing.inOut(Easing.quad),
     extrapolateRight: 'clamp',
   });
@@ -237,7 +306,7 @@ const AlmaEnding: React.FC<{sparkleColor: string}> = ({sparkleColor}) => {
     extrapolateRight: 'clamp',
   });
   const glow = 0.2 + 0.08 * Math.sin((frame / fps) * 2.1);
-  const endFade = interpolate(frame, [ALMA_DURATION - 22, ALMA_DURATION], [0, 1], {
+  const endFade = interpolate(frame, [duration - 22, duration], [0, 1], {
     extrapolateLeft: 'clamp',
   });
 
@@ -268,11 +337,14 @@ const AlmaEnding: React.FC<{sparkleColor: string}> = ({sparkleColor}) => {
 };
 
 export const BetaBabyKunafa: React.FC<z.infer<typeof betaBabyKunafaSchema>> = ({
+  track,
   musicVolume,
   sfxVolume,
   glowColor,
   sparkleColor,
 }) => {
+  const {plan, timeline, almaFrom, duration, cues, ducks} = BUILT[track];
+
   return (
     <AbsoluteFill style={{backgroundColor: PALETTE.bg}}>
       {timeline.map((shot, i) => {
@@ -288,22 +360,20 @@ export const BetaBabyKunafa: React.FC<z.infer<typeof betaBabyKunafaSchema>> = ({
           </Sequence>
         );
       })}
-      <Sequence from={ALMA_FROM} durationInFrames={ALMA_DURATION}>
-        <AlmaEnding sparkleColor={sparkleColor} />
+      <Sequence from={almaFrom} durationInFrames={plan.almaFrames}>
+        <AlmaEnding sparkleColor={sparkleColor} duration={plan.almaFrames} />
       </Sequence>
 
       <Audio
-        src={staticFile('kunafa/music.mp3')}
+        src={staticFile(plan.music)}
         volume={(f) =>
           musicVolume *
-          duckLevel(f) *
+          duckLevel(ducks, f) *
           interpolate(f, [0, 2], [0, 1], {extrapolateRight: 'clamp'}) *
-          interpolate(f, [BETA_BABY_KUNAFA_DURATION - 30, BETA_BABY_KUNAFA_DURATION], [1, 0], {
-            extrapolateLeft: 'clamp',
-          })
+          interpolate(f, [duration - 30, duration], [1, 0], {extrapolateLeft: 'clamp'})
         }
       />
-      {CUES.map((cue, i) => (
+      {cues.map((cue, i) => (
         <Sequence key={`${cue.file}-${i}`} from={cue.from} durationInFrames={cue.frames}>
           <Audio src={staticFile(`kunafa/sfx/${cue.file}.mp3`)} volume={() => cue.volume * sfxVolume} />
         </Sequence>

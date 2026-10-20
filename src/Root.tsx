@@ -9,8 +9,9 @@ import {
 import {
   BetaBabyKunafa,
   betaBabyKunafaSchema,
-  BETA_BABY_KUNAFA_DURATION,
+  trackDuration,
   FPS as BETA_BABY_KUNAFA_FPS,
+  type TrackId,
 } from './compositions/BetaBabyKunafa';
 import {Intro, introSchema} from './compositions/Intro';
 import {SceneTransitions} from './compositions/SceneTransitions';
@@ -48,21 +49,32 @@ export const RemotionRoot: React.FC = () => {
           musicVolume: 0.3,
         }}
       />
-      <Composition
-        id="BetaBabyKunafa"
-        component={BetaBabyKunafa}
-        durationInFrames={BETA_BABY_KUNAFA_DURATION}
-        fps={BETA_BABY_KUNAFA_FPS}
-        width={1080}
-        height={1920}
-        schema={betaBabyKunafaSchema}
-        defaultProps={{
-          musicVolume: 0.6,
-          sfxVolume: 1,
-          glowColor: '#ffc46b',
-          sparkleColor: '#fff2c9',
-        }}
-      />
+      {(
+        [
+          ['BetaBabyKunafa', 'original'],
+          ['BetaBabyKunafaA', 'A'],
+          ['BetaBabyKunafaB', 'B'],
+          ['BetaBabyKunafaC', 'C'],
+        ] as Array<[string, TrackId]>
+      ).map(([id, track]) => (
+        <Composition
+          key={id}
+          id={id}
+          component={BetaBabyKunafa}
+          durationInFrames={trackDuration(track)}
+          fps={BETA_BABY_KUNAFA_FPS}
+          width={1080}
+          height={1920}
+          schema={betaBabyKunafaSchema}
+          defaultProps={{
+            track,
+            musicVolume: 0.6,
+            sfxVolume: 1,
+            glowColor: '#ffc46b',
+            sparkleColor: '#fff2c9',
+          }}
+        />
+      ))}
       <Composition
         id="Intro"
         component={Intro}
