@@ -88,7 +88,7 @@ const SHOTS_96: Shot[] = [
 ];
 
 // 120 BPM = 12 frames per beat: 48 beats of food (24s) so the music's final hit (beat 48) lands on
-// frame 576, where the Alma reveal begins. The crack is placed so the pastry splits on beat 42.
+// frame 576, where the Alma reveal begins. The crack is placed so the pastry splits on beat 40 (frame 480).
 const SHOTS_120: Shot[] = [
   {id: 'pile', srcIn: 4, beats: 4, camera: [1.1, 1.0], cutIn: {kind: 'intro', half: 10}},
   {id: 'nest', srcIn: 56, beats: 9, camera: [1.0, 1.06, -10, 0], cutIn: {kind: 'zoom', half: 5}},
