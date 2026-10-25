@@ -130,24 +130,41 @@ const restingDot = (): DotPose => ({
 // --- Watermark ---------------------------------------------------------------
 // Kept inside the platform-safe area: below the top UI strip, clear of the
 // right-hand action buttons and the bottom caption block.
-// The mark only shows briefly (about 3s) early in the first clip.
+// The mark is a quick, bold pop: it springs in from the left with a bounce while its dot
+// drops in, holds for about a second, then winds up and shoots back out (~1.8s total).
 const WATERMARK_IN = 24;
-const WATERMARK_OUT = 96;
+const WATERMARK_EXIT = 56;
+const WATERMARK_OUT = 68;
 
 const Watermark: React.FC<Props> = ({watermarkOpacity, dotColor}) => {
   const frame = useCurrentFrame();
+  const {fps} = useVideoConfig();
 
-  const visible = interpolate(
-    frame,
-    [WATERMARK_IN, WATERMARK_IN + 8, WATERMARK_OUT - 8, WATERMARK_OUT],
-    [0, 1, 1, 0],
-    {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'},
-  );
+  const enter = spring({
+    frame: frame - WATERMARK_IN,
+    fps,
+    config: {damping: 8, stiffness: 180, mass: 0.7},
+  });
+  // Easing.back pulls the mark slightly bigger before it exits (anticipation).
+  const exit = interpolate(frame, [WATERMARK_EXIT, WATERMARK_OUT], [0, 1], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+    easing: Easing.in(Easing.back(2.2)),
+  });
 
-  // One hop of the dot mid-way, and the green LED blinks — a tiny wink at the brand.
-  const hopT = clamp01((frame - 58) / 14);
-  const hop = Math.abs(Math.sin(hopT * Math.PI)) * 46;
-  const blink = frame >= 48 && frame < 52 ? 0.15 : 1;
+  const scale = enter * (1 - exit);
+  const x = interpolate(enter, [0, 1], [-280, 0]) - 300 * exit;
+  const rotate = interpolate(enter, [0, 1], [-20, 0]) - 16 * exit;
+  const opacity =
+    clamp01(enter * 4) * (1 - clamp01((exit - 0.75) / 0.25)) * watermarkOpacity;
+
+  const labelIn = clamp01((frame - WATERMARK_IN - 4) / 6);
+
+  // The dot drops in and bounces once the badge has landed; the green LED blinks after.
+  const DOT_AT = WATERMARK_IN + 8;
+  const fall = 1 - Easing.bounce(clamp01((frame - DOT_AT) / 14));
+  const dotY = HOME.y - 420 * fall;
+  const blink = frame >= WATERMARK_IN + 24 && frame < WATERMARK_IN + 27 ? 0.15 : 1;
 
   return (
     <AbsoluteFill style={{pointerEvents: 'none'}}>
@@ -156,7 +173,9 @@ const Watermark: React.FC<Props> = ({watermarkOpacity, dotColor}) => {
           position: 'absolute',
           left: 44,
           top: 300,
-          opacity: visible * watermarkOpacity,
+          opacity,
+          transform: `translateX(${x}px) rotate(${rotate}deg) scale(${scale})`,
+          transformOrigin: '20% 60%',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'flex-start',
@@ -173,6 +192,8 @@ const Watermark: React.FC<Props> = ({watermarkOpacity, dotColor}) => {
             textTransform: 'uppercase',
             color: BRAND.cream,
             paddingLeft: 8,
+            opacity: labelIn,
+            transform: `translateY(${interpolate(labelIn, [0, 1], [10, 0])}px)`,
           }}
         >
           made with
@@ -181,7 +202,13 @@ const Watermark: React.FC<Props> = ({watermarkOpacity, dotColor}) => {
           size={150}
           dotColor={dotColor}
           blink={blink}
-          dot={{x: HOME.x, y: HOME.y - hop, scaleX: 1, scaleY: 1, opacity: 1}}
+          dot={{
+            x: HOME.x,
+            y: dotY,
+            scaleX: 1,
+            scaleY: 1,
+            opacity: clamp01((frame - DOT_AT) / 2),
+          }}
         />
       </div>
     </AbsoluteFill>
