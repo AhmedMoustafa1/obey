@@ -31,6 +31,8 @@ npx remotion still Intro out/thumbnail.png --frame=60
 
 Render the main edit: `npx remotion render EggHacks out/seven-egg-hacks.mp4`
 
+The Halloween clips are AI-generated from stitched segments and carry ~65 ms digital-silence dropouts at the joins. `node scripts/patch-audio-dropouts.mjs public/clips/halloween-1.mp4 public/clips/halloween-2.mp4` bridges them with the ambience just before each hole and writes `halloween-N.wav` beside each clip; the composition plays those WAVs under the muted video.
+
 Render the Halloween edit, then remux once so the audio lines up with the picture (Remotion's AAC encoder leaves ~43 ms of priming at the head):
 
 ```bash

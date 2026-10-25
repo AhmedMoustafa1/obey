@@ -21,8 +21,8 @@ import {fontFamily} from '../fonts';
 export const FPS = 24;
 
 // --- Clip timing (source clips are 24fps, 1080x1920) ------------------------
-// Both clips carry ~0.3s of digital silence before the audio starts, so each is
-// trimmed at the head and given a tiny fade-in to avoid a click on the new onset.
+// Both clips open with ~0.1s of digital silence followed by an abrupt onset, so each is
+// trimmed 7 frames (starting inside the sound) and clip 1 gets a tiny fade-in.
 const HEAD_TRIM = 7;
 const CLIP_1_SOURCE_FRAMES = 577;
 const CLIP_2_SOURCE_FRAMES = 721;
@@ -30,8 +30,10 @@ const CLIP_1_FRAMES = CLIP_1_SOURCE_FRAMES - HEAD_TRIM;
 const CLIP_2_FRAMES = CLIP_2_SOURCE_FRAMES - HEAD_TRIM;
 
 // Picture dissolve and equal-power audio crossfade share the same window, so
-// the ear and the eye hand over at the same moment.
-const XFADE = 18;
+// the ear and the eye hand over at the same moment. Clip 1 hard-cuts to a short
+// final shot (~19 frames) just before the end; keep the dissolve brief so that
+// shot still reads instead of being swallowed by a long overlap.
+const XFADE = 10;
 // Clip 2's tail ends mid-sound; it dips out while the dark outro card dissolves in.
 const OUTRO_OVERLAP = 12;
 
@@ -83,17 +85,14 @@ const LolMark: React.FC<{
   ghosts?: DotPose[];
   dotColor: string;
   blink?: number;
-  showBlob?: boolean;
-}> = ({size, dot, ghosts = [], dotColor, blink = 1, showBlob = true}) => (
+}> = ({size, dot, ghosts = [], dotColor, blink = 1}) => (
   <svg
     viewBox="96 100 665 663"
     width={size}
     height={size * (663 / 665)}
     style={{overflow: 'visible', display: 'block'}}
   >
-    {showBlob ? (
-      <rect x={96} y={100} width={665} height={663} rx={250} fill={BRAND.blob} />
-    ) : null}
+    <rect x={96} y={100} width={665} height={663} rx={250} fill={BRAND.blob} />
     <rect x={265} y={327} width={46} height={206} fill={BRAND.cream} />
     <path
       fillRule="evenodd"
@@ -199,6 +198,7 @@ const BLOCKS_SPRING = {damping: 9, stiffness: 140, mass: 0.8};
 // Logo lockup: cube mark, big name, and a small tracked-out subtitle justified to the name's width.
 const LOGO_NAME_WIDTH = 540;
 const LOGO_CUBE_HEIGHT = 190;
+const NAME_TRACKING = -1;
 
 // First frame at which the dropping BLOCKS logo reaches its resting position —
 // used to time the thud and screen shake to the visible impact.
@@ -325,6 +325,7 @@ const Outro: React.FC<Props> = ({logoName, logoSub, dotColor}) => {
     fontFamily,
     fontWeight: '800',
     fontSize: nameSize,
+    letterSpacing: `${NAME_TRACKING}px`,
   }).width;
   const subSize = Math.round(nameSize * 0.34);
   const subWidth = measureText({
@@ -334,7 +335,7 @@ const Outro: React.FC<Props> = ({logoName, logoSub, dotColor}) => {
     fontSize: subSize,
   }).width;
   // Spread the subtitle so its right edge lines up with the name's.
-  const subSpacing = (nameWidth - subWidth) / Math.max(1, logoSub.length - 1);
+  const subSpacing = Math.max(0, (nameWidth - subWidth) / Math.max(1, logoSub.length - 1));
 
   return (
     <AbsoluteFill style={{opacity: bgIn}}>
@@ -366,7 +367,7 @@ const Outro: React.FC<Props> = ({logoName, logoSub, dotColor}) => {
                 fontFamily,
                 fontWeight: 800,
                 fontSize: nameSize,
-                letterSpacing: -1,
+                letterSpacing: NAME_TRACKING,
                 lineHeight: 1,
                 color: BRAND.cream,
                 whiteSpace: 'nowrap',
@@ -466,7 +467,7 @@ const Outro: React.FC<Props> = ({logoName, logoSub, dotColor}) => {
         </div>
       </AbsoluteFill>
 
-      {/* Sound design: block lands, dot boings, whooshes round the loop, pops home. */}
+      {/* Sound design: block lands, dot boings, whooshes round the loop, pops home, chimes. */}
       <Sequence from={IMPACT} durationInFrames={12} layout="none">
         <Audio src={staticFile('sfx/thud.wav')} volume={0.75} />
       </Sequence>
@@ -507,7 +508,13 @@ export const HalloweenPumpkin: React.FC<Props> = (props) => {
         <OffthreadVideo
           src={staticFile('clips/halloween-1.mp4')}
           trimBefore={HEAD_TRIM}
+          muted
           style={{width: '100%', height: '100%', objectFit: 'cover'}}
+        />
+        {/* Audio comes from the dropout-patched WAV (scripts/patch-audio-dropouts.mjs). */}
+        <Audio
+          src={staticFile('clips/halloween-1.wav')}
+          trimBefore={HEAD_TRIM}
           volume={(f) =>
             CLIP_1_GAIN *
             interpolate(f, [0, 5], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'}) *
@@ -521,12 +528,17 @@ export const HalloweenPumpkin: React.FC<Props> = (props) => {
           <OffthreadVideo
             src={staticFile('clips/halloween-2.mp4')}
             trimBefore={HEAD_TRIM}
+            muted
             style={{width: '100%', height: '100%', objectFit: 'cover'}}
-            volume={(f) =>
-              equalIn(f, 0, XFADE) * equalOut(f, CLIP_2_FRAMES - OUTRO_OVERLAP, OUTRO_OVERLAP)
-            }
           />
         </AbsoluteFill>
+        <Audio
+          src={staticFile('clips/halloween-2.wav')}
+          trimBefore={HEAD_TRIM}
+          volume={(f) =>
+            equalIn(f, 0, XFADE) * equalOut(f, CLIP_2_FRAMES - OUTRO_OVERLAP, OUTRO_OVERLAP)
+          }
+        />
       </Sequence>
 
       {props.showWatermark ? (
