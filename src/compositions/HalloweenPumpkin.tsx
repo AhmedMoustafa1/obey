@@ -15,7 +15,7 @@ import {
 import {z} from 'zod';
 import {zColor} from '@remotion/zod-types';
 import {noise2D} from '@remotion/noise';
-import {fitText} from '@remotion/layout-utils';
+import {fitText, measureText} from '@remotion/layout-utils';
 import {fontFamily} from '../fonts';
 
 export const FPS = 24;
@@ -55,7 +55,8 @@ const equalOut = (frame: number, start: number, length: number): number =>
 export const halloweenSchema = z.object({
   showWatermark: z.boolean(),
   watermarkOpacity: z.number().min(0).max(1),
-  logoText: z.string(),
+  logoName: z.string(),
+  logoSub: z.string(),
   dotColor: zColor(),
 });
 
@@ -195,8 +196,9 @@ const Watermark: React.FC<Props> = ({watermarkOpacity, dotColor}) => {
 // --- Outro --------------------------------------------------------------------
 const BLOCKS_AT = 4;
 const BLOCKS_SPRING = {damping: 9, stiffness: 140, mass: 0.8};
-// The cube mark is ~140px wide plus a 30px gap, so the whole logo row stays ~870px wide.
-const LOGO_TEXT_WIDTH = 700;
+// Logo lockup: cube mark, big name, and a small tracked-out subtitle justified to the name's width.
+const LOGO_NAME_WIDTH = 540;
+const LOGO_CUBE_HEIGHT = 190;
 
 // First frame at which the dropping BLOCKS logo reaches its resting position —
 // used to time the thud and screen shake to the visible impact.
@@ -263,7 +265,7 @@ const dotPoseAt = (frame: number, popSpring: number): DotPose => {
   return {x: HOME.x, y: HOME.y, scaleX: pulse, scaleY: pulse, opacity: 1};
 };
 
-const Outro: React.FC<Props> = ({logoText, dotColor}) => {
+const Outro: React.FC<Props> = ({logoName, logoSub, dotColor}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
 
@@ -314,12 +316,25 @@ const Outro: React.FC<Props> = ({logoText, dotColor}) => {
   // Ring burst when the dot lands.
   const ringT = clamp01((frame - POP_AT) / 14);
 
-  const {fontSize: logoFontSize} = fitText({
-    text: logoText,
-    withinWidth: LOGO_TEXT_WIDTH,
+  const nameSize = Math.min(
+    fitText({text: logoName, withinWidth: LOGO_NAME_WIDTH, fontFamily, fontWeight: '800'}).fontSize,
+    170,
+  );
+  const nameWidth = measureText({
+    text: logoName,
     fontFamily,
     fontWeight: '800',
-  });
+    fontSize: nameSize,
+  }).width;
+  const subSize = Math.round(nameSize * 0.34);
+  const subWidth = measureText({
+    text: logoSub,
+    fontFamily,
+    fontWeight: '600',
+    fontSize: subSize,
+  }).width;
+  // Spread the subtitle so its right edge lines up with the name's.
+  const subSpacing = (nameWidth - subWidth) / Math.max(1, logoSub.length - 1);
 
   return (
     <AbsoluteFill style={{opacity: bgIn}}>
@@ -329,7 +344,7 @@ const Outro: React.FC<Props> = ({logoText, dotColor}) => {
         }}
       />
       <AbsoluteFill style={{transform: `translate(${shakeX}px, ${shakeY}px)`}}>
-        {/* blocks.productions logo: cube mark + wordmark */}
+        {/* Logo lockup: cube mark, name, small subtitle underneath */}
         <div
           style={{
             position: 'absolute',
@@ -344,19 +359,36 @@ const Outro: React.FC<Props> = ({logoText, dotColor}) => {
             transform: `translateY(${blocksY}px)`,
           }}
         >
-          <Img src={staticFile('brand/blocks-cube.png')} style={{height: 170}} />
-          <div
-            style={{
-              fontFamily,
-              fontWeight: 800,
-              fontSize: Math.min(logoFontSize, 120),
-              letterSpacing: -1,
-              lineHeight: 1,
-              color: BRAND.cream,
-              whiteSpace: 'nowrap',
-            }}
-          >
-            {logoText}
+          <Img src={staticFile('brand/blocks-cube.png')} style={{height: LOGO_CUBE_HEIGHT}} />
+          <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-start'}}>
+            <div
+              style={{
+                fontFamily,
+                fontWeight: 800,
+                fontSize: nameSize,
+                letterSpacing: -1,
+                lineHeight: 1,
+                color: BRAND.cream,
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {logoName}
+            </div>
+            <div
+              style={{
+                marginTop: Math.round(nameSize * 0.06),
+                fontFamily,
+                fontWeight: 600,
+                fontSize: subSize,
+                letterSpacing: subSpacing,
+                lineHeight: 1,
+                color: BRAND.cream,
+                opacity: 0.85,
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {logoSub}
+            </div>
           </div>
         </div>
 
