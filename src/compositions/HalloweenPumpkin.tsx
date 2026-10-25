@@ -31,13 +31,15 @@ const CLIPS = {
 } as const;
 export type ClipId = keyof typeof CLIPS;
 
-// The clip's tail ends mid-sound; its audio dips out (equal-power) while the dark
-// outro card dissolves in over the same frames.
-const OUTRO_OVERLAP = 12;
+// The clip plays to its very last frame. Its tail ends mid-sound, so the audio dips out
+// (equal-power) over the final frames while the picture is still fully visible, then
+// the outro card fades in right after.
+const AUDIO_DIP = 10;
+const OUTRO_FADE_IN = 6;
 const OUTRO_FRAMES = 100;
 
 const clipFrames = (clip: ClipId): number => CLIPS[clip].sourceFrames - HEAD_TRIM;
-const outroStart = (clip: ClipId): number => clipFrames(clip) - OUTRO_OVERLAP;
+const outroStart = (clip: ClipId): number => clipFrames(clip);
 
 export const HALLOWEEN_DURATION: Record<ClipId, number> = {
   '1': outroStart('1') + OUTRO_FRAMES,
@@ -292,7 +294,7 @@ const Outro: React.FC<Props> = ({logoName, logoSub, dotColor}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
 
-  const bgIn = interpolate(frame, [0, OUTRO_OVERLAP], [0, 1], {
+  const bgIn = interpolate(frame, [0, OUTRO_FADE_IN], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
@@ -537,7 +539,7 @@ export const HalloweenPumpkin: React.FC<Props> = (props) => {
           trimBefore={HEAD_TRIM}
           volume={(f) =>
             interpolate(f, [0, 5], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'}) *
-            equalOut(f, frames - OUTRO_OVERLAP, OUTRO_OVERLAP)
+            equalOut(f, frames - AUDIO_DIP, AUDIO_DIP)
           }
         />
       </Sequence>
