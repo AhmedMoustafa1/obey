@@ -10,6 +10,12 @@ import {Intro, introSchema} from './compositions/Intro';
 import {SceneTransitions} from './compositions/SceneTransitions';
 import {TikTokCaptions, tikTokCaptionsSchema} from './compositions/TikTokCaptions';
 import {LogoReveal, logoRevealSchema} from './compositions/LogoReveal';
+import {
+  HalloweenPumpkin,
+  halloweenSchema,
+  HALLOWEEN_DURATION,
+  FPS as HALLOWEEN_FPS,
+} from './compositions/HalloweenPumpkin';
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -87,6 +93,22 @@ export const RemotionRoot: React.FC = () => {
         defaultProps={{
           strokeColor: '#ffffff',
           orbitColor: '#ffb347',
+        }}
+      />
+      <Composition
+        id="HalloweenPumpkin"
+        component={HalloweenPumpkin}
+        durationInFrames={HALLOWEEN_DURATION}
+        fps={HALLOWEEN_FPS}
+        width={1080}
+        height={1920}
+        schema={halloweenSchema}
+        defaultProps={{
+          showWatermark: true,
+          watermarkOpacity: 0.7,
+          joke: 'Grandma approved.',
+          jokePunchline: 'Probably.',
+          dotColor: '#edcf55',
         }}
       />
     </>

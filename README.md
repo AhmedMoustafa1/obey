@@ -27,8 +27,17 @@ npx remotion still Intro out/thumbnail.png --frame=60
 | `SceneTransitions` | `@remotion/transitions` — fade, slide, wipe between scenes |
 | `TikTokCaptions` | Word-by-word animated captions (vertical 1080×1920) |
 | `LogoReveal` | SVG path draw-on, motion-blur trails, noise-driven wobble |
+| `HalloweenPumpkin` | **Stuffed pumpkin** — two Halloween clips (`public/clips/halloween-*.mp4`) joined with a picture dissolve and an equal-power audio crossfade (dead air trimmed, loudness matched), a corner "made with lol." watermark, and a Blocks Productions / Lore on Loop outro with synthesized SFX (`public/sfx/`, logos in `public/brand/`) (1080×1920 @ 24fps) |
 
 Render the main edit: `npx remotion render EggHacks out/seven-egg-hacks.mp4`
+
+Render the Halloween edit, then remux once so the audio lines up with the picture (Remotion's AAC encoder leaves ~43 ms of priming at the head):
+
+```bash
+npx remotion render HalloweenPumpkin out/halloween-raw.mp4
+npx remotion ffmpeg -i out/halloween-raw.mp4 -map 0:v:0 -map 0:a:0 -c:v copy \
+  -af "atrim=start=0.043,asetpts=PTS-STARTPTS" -c:a aac -b:a 192k -movflags +faststart out/halloween-pumpkin.mp4
+```
 
 ### Caption pipeline
 
