@@ -21,40 +21,36 @@ import {fontFamily} from '../fonts';
 export const FPS = 24;
 
 // --- Clip timing (source clips are 24fps, 1080x1920) ------------------------
+// Each clip is its own finished video: the clip, a brief corner mark, then the outro.
 // Both clips open with ~0.1s of digital silence followed by an abrupt onset, so each is
-// trimmed 7 frames (starting inside the sound) and clip 1 gets a tiny fade-in.
+// trimmed 7 frames (starting inside the sound) and given a tiny audio fade-in.
 const HEAD_TRIM = 7;
-const CLIP_1_SOURCE_FRAMES = 577;
-const CLIP_2_SOURCE_FRAMES = 721;
-const CLIP_1_FRAMES = CLIP_1_SOURCE_FRAMES - HEAD_TRIM;
-const CLIP_2_FRAMES = CLIP_2_SOURCE_FRAMES - HEAD_TRIM;
+const CLIPS = {
+  '1': {video: 'clips/halloween-1.mp4', audio: 'clips/halloween-1.wav', sourceFrames: 577},
+  '2': {video: 'clips/halloween-2.mp4', audio: 'clips/halloween-2.wav', sourceFrames: 721},
+} as const;
+export type ClipId = keyof typeof CLIPS;
 
-// Picture dissolve and equal-power audio crossfade share the same window, so
-// the ear and the eye hand over at the same moment. Clip 1 hard-cuts to a short
-// final shot (~19 frames) just before the end; keep the dissolve brief so that
-// shot still reads instead of being swallowed by a long overlap.
-const XFADE = 10;
-// Clip 2's tail ends mid-sound; it dips out while the dark outro card dissolves in.
+// The clip's tail ends mid-sound; its audio dips out (equal-power) while the dark
+// outro card dissolves in over the same frames.
 const OUTRO_OVERLAP = 12;
-
-// Clip 1 integrated loudness is -18.0 LUFS vs -19.2 LUFS for clip 2.
-// Attenuate the louder one (rather than boosting) so neither can clip.
-const CLIP_1_GAIN = 0.871;
-
-const CLIP_2_START = CLIP_1_FRAMES - XFADE;
-const OUTRO_START = CLIP_2_START + CLIP_2_FRAMES - OUTRO_OVERLAP;
 const OUTRO_FRAMES = 100;
 
-export const HALLOWEEN_DURATION = OUTRO_START + OUTRO_FRAMES;
+const clipFrames = (clip: ClipId): number => CLIPS[clip].sourceFrames - HEAD_TRIM;
+const outroStart = (clip: ClipId): number => clipFrames(clip) - OUTRO_OVERLAP;
+
+export const HALLOWEEN_DURATION: Record<ClipId, number> = {
+  '1': outroStart('1') + OUTRO_FRAMES,
+  '2': outroStart('2') + OUTRO_FRAMES,
+};
 
 const clamp01 = (v: number): number => Math.min(1, Math.max(0, v));
-// Equal-power curves: gains sum to constant power across the crossfade.
-const equalIn = (frame: number, start: number, length: number): number =>
-  Math.sin(clamp01((frame - start) / length) * (Math.PI / 2));
+// Equal-power curve: gains sum to constant power across the dip-out.
 const equalOut = (frame: number, start: number, length: number): number =>
   Math.cos(clamp01((frame - start) / length) * (Math.PI / 2));
 
 export const halloweenSchema = z.object({
+  clip: z.enum(['1', '2']),
   showWatermark: z.boolean(),
   watermarkOpacity: z.number().min(0).max(1),
   logoName: z.string(),
@@ -495,48 +491,26 @@ const Outro: React.FC<Props> = ({logoName, logoSub, dotColor}) => {
 
 // --- Main composition ----------------------------------------------------------
 export const HalloweenPumpkin: React.FC<Props> = (props) => {
-  const frame = useCurrentFrame();
-
-  const secondOpacity = interpolate(frame - CLIP_2_START, [0, XFADE], [0, 1], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  });
+  const {video, audio} = CLIPS[props.clip];
+  const frames = clipFrames(props.clip);
+  const start = outroStart(props.clip);
 
   return (
     <AbsoluteFill style={{backgroundColor: BRAND.bg}}>
-      <Sequence durationInFrames={CLIP_1_FRAMES}>
+      <Sequence durationInFrames={frames}>
         <OffthreadVideo
-          src={staticFile('clips/halloween-1.mp4')}
+          src={staticFile(video)}
           trimBefore={HEAD_TRIM}
           muted
           style={{width: '100%', height: '100%', objectFit: 'cover'}}
         />
         {/* Audio comes from the dropout-patched WAV (scripts/patch-audio-dropouts.mjs). */}
         <Audio
-          src={staticFile('clips/halloween-1.wav')}
+          src={staticFile(audio)}
           trimBefore={HEAD_TRIM}
           volume={(f) =>
-            CLIP_1_GAIN *
             interpolate(f, [0, 5], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'}) *
-            equalOut(f, CLIP_1_FRAMES - XFADE, XFADE)
-          }
-        />
-      </Sequence>
-
-      <Sequence from={CLIP_2_START} durationInFrames={CLIP_2_FRAMES}>
-        <AbsoluteFill style={{opacity: secondOpacity}}>
-          <OffthreadVideo
-            src={staticFile('clips/halloween-2.mp4')}
-            trimBefore={HEAD_TRIM}
-            muted
-            style={{width: '100%', height: '100%', objectFit: 'cover'}}
-          />
-        </AbsoluteFill>
-        <Audio
-          src={staticFile('clips/halloween-2.wav')}
-          trimBefore={HEAD_TRIM}
-          volume={(f) =>
-            equalIn(f, 0, XFADE) * equalOut(f, CLIP_2_FRAMES - OUTRO_OVERLAP, OUTRO_OVERLAP)
+            equalOut(f, frames - OUTRO_OVERLAP, OUTRO_OVERLAP)
           }
         />
       </Sequence>
@@ -547,7 +521,7 @@ export const HalloweenPumpkin: React.FC<Props> = (props) => {
         </Sequence>
       ) : null}
 
-      <Sequence from={OUTRO_START} durationInFrames={OUTRO_FRAMES}>
+      <Sequence from={start} durationInFrames={OUTRO_FRAMES}>
         <Outro {...props} />
       </Sequence>
     </AbsoluteFill>

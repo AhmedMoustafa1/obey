@@ -95,22 +95,26 @@ export const RemotionRoot: React.FC = () => {
           orbitColor: '#ffb347',
         }}
       />
-      <Composition
-        id="HalloweenPumpkin"
-        component={HalloweenPumpkin}
-        durationInFrames={HALLOWEEN_DURATION}
-        fps={HALLOWEEN_FPS}
-        width={1080}
-        height={1920}
-        schema={halloweenSchema}
-        defaultProps={{
-          showWatermark: true,
-          watermarkOpacity: 0.7,
-          logoName: 'blocks',
-          logoSub: 'productions',
-          dotColor: '#edcf55',
-        }}
-      />
+      {(['1', '2'] as const).map((clip) => (
+        <Composition
+          key={clip}
+          id={`HalloweenVideo${clip}`}
+          component={HalloweenPumpkin}
+          durationInFrames={HALLOWEEN_DURATION[clip]}
+          fps={HALLOWEEN_FPS}
+          width={1080}
+          height={1920}
+          schema={halloweenSchema}
+          defaultProps={{
+            clip,
+            showWatermark: true,
+            watermarkOpacity: 0.7,
+            logoName: 'blocks',
+            logoSub: 'productions',
+            dotColor: '#edcf55',
+          }}
+        />
+      ))}
     </>
   );
 };

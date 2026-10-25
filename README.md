@@ -27,18 +27,20 @@ npx remotion still Intro out/thumbnail.png --frame=60
 | `SceneTransitions` | `@remotion/transitions` — fade, slide, wipe between scenes |
 | `TikTokCaptions` | Word-by-word animated captions (vertical 1080×1920) |
 | `LogoReveal` | SVG path draw-on, motion-blur trails, noise-driven wobble |
-| `HalloweenPumpkin` | **Stuffed pumpkin** — two Halloween clips (`public/clips/halloween-*.mp4`) joined with a picture dissolve and an equal-power audio crossfade (dead air trimmed, loudness matched), a brief "made with lol." corner mark early on, and a Blocks / productions / Lore on Loop outro, with synthesized SFX (`public/sfx/`, logos in `public/brand/`) (1080×1920 @ 24fps) |
+| `HalloweenVideo1`, `HalloweenVideo2` | **Two standalone Halloween stuffed-pumpkin videos** (one per clip in `public/clips/halloween-*.mp4`): audio trimmed of dead air and with the generated clips' dropouts bridged, equal-power dip-out into a Blocks productions / Lore on Loop outro, a brief "made with lol." corner mark early on, and synthesized SFX (`public/sfx/`, logos in `public/brand/`) (1080×1920 @ 24fps) |
 
 Render the main edit: `npx remotion render EggHacks out/seven-egg-hacks.mp4`
 
 The Halloween clips are AI-generated from stitched segments and carry ~65 ms digital-silence dropouts at the joins. `node scripts/patch-audio-dropouts.mjs public/clips/halloween-1.mp4 public/clips/halloween-2.mp4` bridges them with the ambience just before each hole and writes `halloween-N.wav` beside each clip; the composition plays those WAVs under the muted video.
 
-Render the Halloween edit, then remux once so the audio lines up with the picture (Remotion's AAC encoder leaves ~43 ms of priming at the head):
+Render each Halloween video, then remux once so the audio lines up with the picture (Remotion's AAC encoder leaves ~43 ms of priming at the head):
 
 ```bash
-npx remotion render HalloweenPumpkin out/halloween-raw.mp4
-npx remotion ffmpeg -i out/halloween-raw.mp4 -map 0:v:0 -map 0:a:0 -c:v copy \
-  -af "atrim=start=0.043,asetpts=PTS-STARTPTS" -c:a aac -b:a 192k -movflags +faststart out/halloween-pumpkin.mp4
+for n in 1 2; do
+  npx remotion render HalloweenVideo$n out/halloween-video-$n-raw.mp4
+  npx remotion ffmpeg -i out/halloween-video-$n-raw.mp4 -map 0:v:0 -map 0:a:0 -c:v copy \
+    -af "atrim=start=0.043,asetpts=PTS-STARTPTS" -c:a aac -b:a 192k -movflags +faststart out/halloween-video-$n.mp4
+done
 ```
 
 ### Caption pipeline
