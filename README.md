@@ -27,7 +27,7 @@ npx remotion still Intro out/thumbnail.png --frame=60
 | `SceneTransitions` | `@remotion/transitions` — fade, slide, wipe between scenes |
 | `TikTokCaptions` | Word-by-word animated captions (vertical 1080×1920) |
 | `LogoReveal` | SVG path draw-on, motion-blur trails, noise-driven wobble |
-| `HalloweenPumpkin` | **Stuffed pumpkin** — two Halloween clips (`public/clips/halloween-*.mp4`) joined with a picture dissolve and an equal-power audio crossfade (dead air trimmed, loudness matched), a corner "made with lol." watermark, and a Blocks Productions / Lore on Loop outro with synthesized SFX (`public/sfx/`, logos in `public/brand/`) (1080×1920 @ 24fps) |
+| `HalloweenPumpkin` | **Stuffed pumpkin** — two Halloween clips (`public/clips/halloween-*.mp4`) joined with a picture dissolve and an equal-power audio crossfade (dead air trimmed, loudness matched), a brief "made with lol." corner mark early on, and a Blocks Productions / Lore on Loop outro ending on blocks.productions, with synthesized SFX (`public/sfx/`, logos in `public/brand/`) (1080×1920 @ 24fps) |
 
 Render the main edit: `npx remotion render EggHacks out/seven-egg-hacks.mp4`
 

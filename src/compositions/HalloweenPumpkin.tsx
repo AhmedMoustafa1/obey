@@ -40,7 +40,7 @@ const CLIP_1_GAIN = 0.871;
 
 const CLIP_2_START = CLIP_1_FRAMES - XFADE;
 const OUTRO_START = CLIP_2_START + CLIP_2_FRAMES - OUTRO_OVERLAP;
-const OUTRO_FRAMES = 116;
+const OUTRO_FRAMES = 108;
 
 export const HALLOWEEN_DURATION = OUTRO_START + OUTRO_FRAMES;
 
@@ -54,8 +54,7 @@ const equalOut = (frame: number, start: number, length: number): number =>
 export const halloweenSchema = z.object({
   showWatermark: z.boolean(),
   watermarkOpacity: z.number().min(0).max(1),
-  joke: z.string(),
-  jokePunchline: z.string(),
+  url: z.string(),
   dotColor: zColor(),
 });
 
@@ -134,25 +133,24 @@ const restingDot = (): DotPose => ({
 // --- Watermark ---------------------------------------------------------------
 // Kept inside the platform-safe area: below the top UI strip, clear of the
 // right-hand action buttons and the bottom caption block.
-const Watermark: React.FC<Props & {fadeOutAt: number}> = ({
-  watermarkOpacity,
-  dotColor,
-  fadeOutAt,
-}) => {
+// The mark only shows briefly (about 3s) early in the first clip.
+const WATERMARK_IN = 24;
+const WATERMARK_OUT = 96;
+
+const Watermark: React.FC<Props> = ({watermarkOpacity, dotColor}) => {
   const frame = useCurrentFrame();
 
-  const visible =
-    interpolate(frame, [18, 34], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'}) *
-    interpolate(frame, [fadeOutAt - 10, fadeOutAt], [1, 0], {
-      extrapolateLeft: 'clamp',
-      extrapolateRight: 'clamp',
-    });
+  const visible = interpolate(
+    frame,
+    [WATERMARK_IN, WATERMARK_IN + 8, WATERMARK_OUT - 8, WATERMARK_OUT],
+    [0, 1, 1, 0],
+    {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'},
+  );
 
-  // Every 5s the dot hops once, and the green LED blinks — a tiny wink at the brand.
-  const cycle = (frame - 18) % 120;
-  const hopT = clamp01((cycle - 96) / 14);
-  const hop = Math.abs(Math.sin(hopT * Math.PI)) * 46 * (cycle >= 96 ? 1 : 0);
-  const blink = cycle >= 60 && cycle < 64 ? 0.15 : 1;
+  // One hop of the dot mid-way, and the green LED blinks — a tiny wink at the brand.
+  const hopT = clamp01((frame - 58) / 14);
+  const hop = Math.abs(Math.sin(hopT * Math.PI)) * 46;
+  const blink = frame >= 48 && frame < 52 ? 0.15 : 1;
 
   return (
     <AbsoluteFill style={{pointerEvents: 'none'}}>
@@ -212,7 +210,7 @@ const DROP_FRAMES = 16;
 const LOOP_AT = 50;
 const LOOP_FRAMES = 20;
 const POP_AT = LOOP_AT + LOOP_FRAMES;
-const JOKE_AT = POP_AT + 4;
+const URL_AT = POP_AT + 4;
 
 // Dot position for a normalized point in the loop-the-loop (t: 0 → 1).
 const loopPose = (t: number): {x: number; y: number} => {
@@ -262,7 +260,7 @@ const dotPoseAt = (frame: number, popSpring: number): DotPose => {
   return {x: HOME.x, y: HOME.y, scaleX: pulse, scaleY: pulse, opacity: 1};
 };
 
-const Outro: React.FC<Props> = ({joke, jokePunchline, dotColor}) => {
+const Outro: React.FC<Props> = ({url, dotColor}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
 
@@ -314,8 +312,7 @@ const Outro: React.FC<Props> = ({joke, jokePunchline, dotColor}) => {
   // Ring burst when the dot lands.
   const ringT = clamp01((frame - POP_AT) / 14);
 
-  const jokeIn = spring({frame: frame - JOKE_AT, fps, config: {damping: 14}, durationInFrames: 14});
-  const punchIn = spring({frame: frame - (JOKE_AT + 9), fps, config: {damping: 10}, durationInFrames: 12});
+  const urlIn = spring({frame: frame - URL_AT, fps, config: {damping: 200}, durationInFrames: 12});
 
   return (
     <AbsoluteFill style={{opacity: bgIn}}>
@@ -434,43 +431,26 @@ const Outro: React.FC<Props> = ({joke, jokePunchline, dotColor}) => {
           </div>
         </div>
 
-        {/* The joke */}
-        <div
-          style={{
-            position: 'absolute',
-            left: 60,
-            right: 60,
-            top: 1590,
-            display: 'flex',
-            flexWrap: 'wrap',
-            justifyContent: 'center',
-            alignItems: 'baseline',
-            gap: 16,
-            fontFamily,
-            fontWeight: 800,
-            fontSize: 60,
-            color: BRAND.cream,
-          }}
-        >
-          <span
+        {url ? (
+          <div
             style={{
-              opacity: jokeIn,
-              transform: `translateY(${interpolate(jokeIn, [0, 1], [24, 0])}px)`,
+              position: 'absolute',
+              left: 0,
+              right: 0,
+              top: 1600,
+              textAlign: 'center',
+              fontFamily,
+              fontWeight: 700,
+              fontSize: 46,
+              letterSpacing: 3,
+              color: BRAND.cream,
+              opacity: urlIn * 0.9,
+              transform: `translateY(${interpolate(urlIn, [0, 1], [18, 0])}px)`,
             }}
           >
-            {joke}
-          </span>
-          <span
-            style={{
-              color: dotColor,
-              opacity: clamp01(punchIn * 1.5),
-              transform: `scale(${interpolate(punchIn, [0, 1], [0.6, 1])}) rotate(${interpolate(punchIn, [0, 1], [-5, -2])}deg)`,
-              display: 'inline-block',
-            }}
-          >
-            {jokePunchline}
-          </span>
-        </div>
+            {url}
+          </div>
+        ) : null}
       </AbsoluteFill>
 
       {/* Sound design: block lands, dot boings, whooshes round the loop, pops home. */}
@@ -492,8 +472,8 @@ const Outro: React.FC<Props> = ({joke, jokePunchline, dotColor}) => {
       <Sequence from={POP_AT} durationInFrames={6} layout="none">
         <Audio src={staticFile('sfx/pop.wav')} volume={0.8} />
       </Sequence>
-      <Sequence from={JOKE_AT + 9} durationInFrames={33} layout="none">
-        <Audio src={staticFile('sfx/womp.wav')} volume={0.4} />
+      <Sequence from={URL_AT} durationInFrames={OUTRO_FRAMES - URL_AT} layout="none">
+        <Audio src={staticFile('sfx/chime.wav')} volume={0.5} />
       </Sequence>
     </AbsoluteFill>
   );
@@ -510,7 +490,7 @@ export const HalloweenPumpkin: React.FC<Props> = (props) => {
 
   return (
     <AbsoluteFill style={{backgroundColor: BRAND.bg}}>
-      <Sequence  durationInFrames={CLIP_1_FRAMES}>
+      <Sequence durationInFrames={CLIP_1_FRAMES}>
         <OffthreadVideo
           src={staticFile('clips/halloween-1.mp4')}
           trimBefore={HEAD_TRIM}
@@ -537,8 +517,8 @@ export const HalloweenPumpkin: React.FC<Props> = (props) => {
       </Sequence>
 
       {props.showWatermark ? (
-        <Sequence  durationInFrames={OUTRO_START + OUTRO_OVERLAP}>
-          <Watermark {...props} fadeOutAt={OUTRO_START + OUTRO_OVERLAP} />
+        <Sequence durationInFrames={WATERMARK_OUT}>
+          <Watermark {...props} />
         </Sequence>
       ) : null}
 

@@ -106,8 +106,7 @@ export const RemotionRoot: React.FC = () => {
         defaultProps={{
           showWatermark: true,
           watermarkOpacity: 0.7,
-          joke: 'Grandma approved.',
-          jokePunchline: 'Probably.',
+          url: 'blocks.productions',
           dotColor: '#edcf55',
         }}
       />
