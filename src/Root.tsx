@@ -106,7 +106,7 @@ export const RemotionRoot: React.FC = () => {
         defaultProps={{
           showWatermark: true,
           watermarkOpacity: 0.7,
-          url: 'blocks.productions',
+          logoText: 'blocks.productions',
           dotColor: '#edcf55',
         }}
       />

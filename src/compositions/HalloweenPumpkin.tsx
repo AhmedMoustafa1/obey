@@ -15,6 +15,7 @@ import {
 import {z} from 'zod';
 import {zColor} from '@remotion/zod-types';
 import {noise2D} from '@remotion/noise';
+import {fitText} from '@remotion/layout-utils';
 import {fontFamily} from '../fonts';
 
 export const FPS = 24;
@@ -40,7 +41,7 @@ const CLIP_1_GAIN = 0.871;
 
 const CLIP_2_START = CLIP_1_FRAMES - XFADE;
 const OUTRO_START = CLIP_2_START + CLIP_2_FRAMES - OUTRO_OVERLAP;
-const OUTRO_FRAMES = 108;
+const OUTRO_FRAMES = 100;
 
 export const HALLOWEEN_DURATION = OUTRO_START + OUTRO_FRAMES;
 
@@ -54,7 +55,7 @@ const equalOut = (frame: number, start: number, length: number): number =>
 export const halloweenSchema = z.object({
   showWatermark: z.boolean(),
   watermarkOpacity: z.number().min(0).max(1),
-  url: z.string(),
+  logoText: z.string(),
   dotColor: zColor(),
 });
 
@@ -194,6 +195,8 @@ const Watermark: React.FC<Props> = ({watermarkOpacity, dotColor}) => {
 // --- Outro --------------------------------------------------------------------
 const BLOCKS_AT = 4;
 const BLOCKS_SPRING = {damping: 9, stiffness: 140, mass: 0.8};
+// The cube mark is ~140px wide plus a 30px gap, so the whole logo row stays ~870px wide.
+const LOGO_TEXT_WIDTH = 700;
 
 // First frame at which the dropping BLOCKS logo reaches its resting position —
 // used to time the thud and screen shake to the visible impact.
@@ -210,7 +213,7 @@ const DROP_FRAMES = 16;
 const LOOP_AT = 50;
 const LOOP_FRAMES = 20;
 const POP_AT = LOOP_AT + LOOP_FRAMES;
-const URL_AT = POP_AT + 4;
+const CHIME_AT = POP_AT + 4;
 
 // Dot position for a normalized point in the loop-the-loop (t: 0 → 1).
 const loopPose = (t: number): {x: number; y: number} => {
@@ -260,7 +263,7 @@ const dotPoseAt = (frame: number, popSpring: number): DotPose => {
   return {x: HOME.x, y: HOME.y, scaleX: pulse, scaleY: pulse, opacity: 1};
 };
 
-const Outro: React.FC<Props> = ({url, dotColor}) => {
+const Outro: React.FC<Props> = ({logoText, dotColor}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
 
@@ -280,7 +283,6 @@ const Outro: React.FC<Props> = ({url, dotColor}) => {
   const blocksY = (1 - drop) * -560;
   const blocksOpacity = clamp01((frame - BLOCKS_AT) / 4);
 
-  const prodIn = spring({frame: frame - (IMPACT + 3), fps, config: {damping: 200}, durationInFrames: 14});
   const madeIn = spring({frame: frame - 20, fps, config: {damping: 200}, durationInFrames: 12});
   const badgeIn = spring({frame: frame - 22, fps, config: {damping: 12}, durationInFrames: 18});
   const taglineIn = spring({frame: frame - TAGLINE_AT, fps, config: {damping: 200}, durationInFrames: 14});
@@ -312,7 +314,12 @@ const Outro: React.FC<Props> = ({url, dotColor}) => {
   // Ring burst when the dot lands.
   const ringT = clamp01((frame - POP_AT) / 14);
 
-  const urlIn = spring({frame: frame - URL_AT, fps, config: {damping: 200}, durationInFrames: 12});
+  const {fontSize: logoFontSize} = fitText({
+    text: logoText,
+    withinWidth: LOGO_TEXT_WIDTH,
+    fontFamily,
+    fontWeight: '800',
+  });
 
   return (
     <AbsoluteFill style={{opacity: bgIn}}>
@@ -322,39 +329,34 @@ const Outro: React.FC<Props> = ({url, dotColor}) => {
         }}
       />
       <AbsoluteFill style={{transform: `translate(${shakeX}px, ${shakeY}px)`}}>
-        {/* BLOCKS PRODUCTIONS */}
+        {/* blocks.productions logo: cube mark + wordmark */}
         <div
           style={{
             position: 'absolute',
             left: 0,
             right: 0,
-            top: 440,
+            top: 520,
             display: 'flex',
-            flexDirection: 'column',
+            justifyContent: 'center',
             alignItems: 'center',
+            gap: 30,
+            opacity: blocksOpacity,
+            transform: `translateY(${blocksY}px)`,
           }}
         >
-          <Img
-            src={staticFile('brand/blocks-logo.png')}
-            style={{
-              width: 760,
-              opacity: blocksOpacity,
-              transform: `translateY(${blocksY}px)`,
-            }}
-          />
+          <Img src={staticFile('brand/blocks-cube.png')} style={{height: 170}} />
           <div
             style={{
-              marginTop: 26,
               fontFamily,
-              fontWeight: 600,
-              fontSize: 40,
-              letterSpacing: interpolate(prodIn, [0, 1], [34, 20]),
-              paddingLeft: interpolate(prodIn, [0, 1], [34, 20]),
+              fontWeight: 800,
+              fontSize: Math.min(logoFontSize, 120),
+              letterSpacing: -1,
+              lineHeight: 1,
               color: BRAND.cream,
-              opacity: prodIn * 0.85,
+              whiteSpace: 'nowrap',
             }}
           >
-            PRODUCTIONS
+            {logoText}
           </div>
         </div>
 
@@ -430,27 +432,6 @@ const Outro: React.FC<Props> = ({url, dotColor}) => {
             lore on loop
           </div>
         </div>
-
-        {url ? (
-          <div
-            style={{
-              position: 'absolute',
-              left: 0,
-              right: 0,
-              top: 1600,
-              textAlign: 'center',
-              fontFamily,
-              fontWeight: 700,
-              fontSize: 46,
-              letterSpacing: 3,
-              color: BRAND.cream,
-              opacity: urlIn * 0.9,
-              transform: `translateY(${interpolate(urlIn, [0, 1], [18, 0])}px)`,
-            }}
-          >
-            {url}
-          </div>
-        ) : null}
       </AbsoluteFill>
 
       {/* Sound design: block lands, dot boings, whooshes round the loop, pops home. */}
@@ -472,7 +453,7 @@ const Outro: React.FC<Props> = ({url, dotColor}) => {
       <Sequence from={POP_AT} durationInFrames={6} layout="none">
         <Audio src={staticFile('sfx/pop.wav')} volume={0.8} />
       </Sequence>
-      <Sequence from={URL_AT} durationInFrames={OUTRO_FRAMES - URL_AT} layout="none">
+      <Sequence from={CHIME_AT} durationInFrames={OUTRO_FRAMES - CHIME_AT} layout="none">
         <Audio src={staticFile('sfx/chime.wav')} volume={0.5} />
       </Sequence>
     </AbsoluteFill>
